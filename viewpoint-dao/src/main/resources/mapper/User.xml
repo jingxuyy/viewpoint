@@ -37,7 +37,7 @@
             #{userInfo.gender},
             #{userInfo.birth},
             #{userInfo.createTime},
-            #{userInfo.avatar}
+            #{userInfo.avatar},
             #{userInfo.sign}
         )
     </insert>
@@ -49,5 +49,21 @@
             t_user
         where
             phone = #{phone}
+    </select>
+    <select id="getUserById" resultType="com.xu.viewpoint.dao.domain.User">
+        select
+            *
+        from
+            t_user
+        where
+            id = #{id}
+    </select>
+    <select id="getUserInfoById" resultType="com.xu.viewpoint.dao.domain.UserInfo">
+        select
+            *
+        from
+            t_user_info
+        where
+            userId = #{userId}
     </select>
 </mapper>

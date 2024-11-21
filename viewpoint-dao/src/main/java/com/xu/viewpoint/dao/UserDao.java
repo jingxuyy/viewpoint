@@ -27,4 +27,16 @@ public interface UserDao {
      * @param userInfo
      */
     Integer addUserInfo(@Param("userInfo") UserInfo userInfo);
+
+    /**
+     * 根据userId获取用户
+     * @param userId
+     */
+    User getUserById(@Param("id") Long id);
+
+    /**
+     * 根据用户id查询用户信息
+     * @param userId
+     */
+    UserInfo getUserInfoById(@Param("userId")Long userId);
 }

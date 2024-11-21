@@ -47,6 +47,14 @@ public class JsonResponse <T>{
     }
 
     /**
+     * 请求成功，返回数据  T
+     * @return JsonResponse
+     */
+    public static <T> JsonResponse<T> success(T data){
+        return new JsonResponse<>(data);
+    }
+
+    /**
      * 请求失败，返回失败信息
      * @return JsonResponse
      */

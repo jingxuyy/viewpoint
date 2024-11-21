@@ -1,5 +1,6 @@
 package com.xu.viewpoint.api;
 
+import com.xu.viewpoint.api.support.UserSupport;
 import com.xu.viewpoint.dao.domain.JsonResponse;
 import com.xu.viewpoint.service.UserService;
 import com.xu.viewpoint.service.util.RSAUtil;
@@ -19,6 +20,9 @@ public class UserApi {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserSupport userSupport;
 
     /**
      * 获取公钥
@@ -45,8 +49,19 @@ public class UserApi {
      * @return 返回登录token
      */
     @PostMapping("/user-tokens")
-    public JsonResponse<String> login(@RequestBody User user){
+    public JsonResponse<String> login(@RequestBody User user) throws Exception {
         String token = userService.login(user);
         return JsonResponse.success(token);
+    }
+
+    /**
+     * 获取当前登录用户
+     * @return user
+     */
+    @GetMapping("/users")
+    public JsonResponse<User> getCurrentUser(){
+        Long userId = userSupport.getCurrentUserId();
+        User user = userService.getCurrentUser(userId);
+        return JsonResponse.success(user);
     }
 }

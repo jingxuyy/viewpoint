@@ -49,6 +49,8 @@ public class User implements Serializable {
 
     private Date updateTime;
 
+    private UserInfo userInfo;
+
     public Long getId() {
         return id;
     }
@@ -103,5 +105,13 @@ public class User implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
 }

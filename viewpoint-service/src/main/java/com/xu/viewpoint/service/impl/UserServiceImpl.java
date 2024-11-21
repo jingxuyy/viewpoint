@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
      * @return token
      */
     @Override
-    public String login(User user) {
+    public String login(User user) throws Exception {
 
         // 1. 验证手机号是否为空
         // TODO 是否要验证手机号是否合法
@@ -120,8 +120,22 @@ public class UserServiceImpl implements UserService {
         }
 
         // 6. 生成登录用户凭证token返回
-        TokenUtil tokenUtil = new TokenUtil();
-        return tokenUtil.generateToken(user.getId());
+        return TokenUtil.generateToken(dbUser.getId());
+    }
+
+
+    /**
+     * 根据id查询用户
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public User getCurrentUser(Long userId) {
+        User user = userDao.getUserById(userId);
+        UserInfo userInfo =userDao.getUserInfoById(userId);
+        user.setUserInfo(userInfo);
+        return user;
     }
 
     /**

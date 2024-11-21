@@ -21,5 +21,19 @@ public interface UserService {
      * @param user
      * @return token
      */
-    String login(User user);
+    String login(User user) throws Exception;
+
+    /**
+     * 根据id查询用户信息
+     * @param userId
+     * @return
+     */
+//    User getUserInfo(Long userId);
+
+    /**
+     * 根据id查询用户
+     * @param userId
+     * @return
+     */
+    User getCurrentUser(Long userId);
 }
