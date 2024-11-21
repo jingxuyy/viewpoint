@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.viewpoint.dao.UserDao">
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            t_user(
+               phone,
+               email,
+               password,
+               salt,
+               createTime
+             )
+        values (
+            #{user.phone},
+            #{user.email},
+            #{user.password},
+            #{user.salt},
+            #{user.createTime}
+            )
+    </insert>
+    <insert id="addUserInfo">
+        insert into
+            t_user_info(
+                userId,
+                nick,
+                gender,
+                birth,
+                createTime,
+                avatar,
+                sign
+        )
+        values (
+            #{userInfo.userId},
+            #{userInfo.nick},
+            #{userInfo.gender},
+            #{userInfo.birth},
+            #{userInfo.createTime},
+            #{userInfo.avatar}
+            #{userInfo.sign}
+        )
+    </insert>
+
+    <select id="getUserByPhone" resultType="com.xu.viewpoint.dao.domain.User">
+        select
+            *
+        from
+            t_user
+        where
+            phone = #{phone}
+    </select>
+</mapper>
