@@ -86,16 +86,21 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String login(User user) throws Exception {
+        // XXX 改造：增加邮箱登录，要求：同时只会有一种情况登录
 
         // 1. 验证手机号是否为空
         // TODO 是否要验证手机号是否合法
-        String phone = user.getPhone();
-        if(StringUtils.isNullOrEmpty(phone)){
-            throw new ConditionException("手机号不能为空！");
+        String phone = user.getPhone() == null ? "" : user.getPhone();
+        String email = user.getEmail() == null ? "" : user.getEmail();
+        if(StringUtils.isNullOrEmpty(phone) && StringUtils.isNullOrEmpty(email)){
+            throw new ConditionException("参数异常！");
         }
 
+        String phoneOrEmail = phone + email;
+
+
         // 2. 验证用户是否存在
-        User dbUser = this.getUserByPhone(phone);
+        User dbUser = userDao.getUserByPhoneOrEmail(phoneOrEmail);
         if(dbUser==null){
             throw new ConditionException("当前用户不存在！");
         }
@@ -132,18 +137,62 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public User getCurrentUser(Long userId) {
+
+        // 1. 根据id查询用户
         User user = userDao.getUserById(userId);
+
+        // 2. 根据id查询用户信息
         UserInfo userInfo =userDao.getUserInfoById(userId);
+
+        // 3. 将用户信息封装到用户对象返回
         user.setUserInfo(userInfo);
         return user;
     }
+
+    /**
+     * 更新用户信息
+     *
+     * @param user
+     */
+    @Override
+    public void updateUser(User user) throws Exception {
+        // TODO 用户更新可以更新 ：1. phone  2. password  3. email
+        // TODO 其中 phone 如果不为空，说明要更新phone信息 此时需要检查phone是否符合规范，同理email如此
+        // TODO 如果 1 2 3 都为空 则不需要更新
+        // 1. 获取需要更新的用户id
+        Long id = user.getId();
+
+        // 2. 根据id查询用户，不存在抛出异常
+        User dbUser = userDao.getUserById(id);
+        if(dbUser == null){
+            throw new ConditionException("用户不存在！");
+        }
+
+        // 3. 获取提交的密码信息，若提交的密码不为空，说明需要修改密码
+        String password = user.getPassword();
+        if(!StringUtils.isNullOrEmpty(password)){
+            // 3.1 将提交的密码解密，还原
+            String originalPassword = RSAUtil.decrypt(password);
+            // 3.2 将还原的密码加密，并设置到用户中
+            String md5Password = MD5Util.sign(originalPassword, dbUser.getSalt(), "UTF-8");
+            user.setPassword(md5Password);
+        }
+
+        // 4. 设置更新的时间
+        user.setUpdateTime(new Date());
+
+        // 5. 更新用户信息
+        userDao.updateUser(user);
+    }
+
+    // ----------------------------------------------- private -----------------------------------------------
 
     /**
      * 根据手机号查询用户
      * @param phone
      * @return User
      */
-    public User getUserByPhone(String phone){
+    private User getUserByPhone(String phone){
         return userDao.getUserByPhone(phone);
     }
 }

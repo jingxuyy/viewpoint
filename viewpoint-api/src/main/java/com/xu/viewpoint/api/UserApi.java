@@ -6,10 +6,7 @@ import com.xu.viewpoint.service.UserService;
 import com.xu.viewpoint.service.util.RSAUtil;
 import com.xu.viewpoint.dao.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author: xuJing
@@ -63,5 +60,17 @@ public class UserApi {
         Long userId = userSupport.getCurrentUserId();
         User user = userService.getCurrentUser(userId);
         return JsonResponse.success(user);
+    }
+
+    /**
+     * 更新用户信息
+     * @param user
+     */
+    @PutMapping("/users")
+    public JsonResponse<String> updateUser(@RequestBody User user) throws Exception {
+        Long userId = userSupport.getCurrentUserId();
+        user.setId(userId);
+        userService.updateUser(user);
+        return JsonResponse.success();
     }
 }

@@ -36,4 +36,10 @@ public interface UserService {
      * @return
      */
     User getCurrentUser(Long userId);
+
+    /**
+     * 更新用户信息
+     * @param user
+     */
+    void updateUser(User user) throws Exception;
 }

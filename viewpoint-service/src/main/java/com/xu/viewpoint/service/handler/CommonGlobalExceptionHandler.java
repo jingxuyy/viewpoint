@@ -26,7 +26,7 @@ public class CommonGlobalExceptionHandler {
             String errorCode = ((ConditionException) e).getCode();
             return new JsonResponse<>(errorCode, errorMsg);
         }else {
-            return new JsonResponse<>("500", errorMsg);
+            return new JsonResponse<>("500", "系统错误");
         }
     }
 }

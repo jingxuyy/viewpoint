@@ -30,7 +30,7 @@ public interface UserDao {
 
     /**
      * 根据userId获取用户
-     * @param userId
+     * @param id
      */
     User getUserById(@Param("id") Long id);
 
@@ -39,4 +39,16 @@ public interface UserDao {
      * @param userId
      */
     UserInfo getUserInfoById(@Param("userId")Long userId);
+
+    /**
+     * 根据phone和email其中之一查询用户（phone 和 email只会有一个存在）
+     * @param phoneOrEmail
+     */
+    User getUserByPhoneOrEmail(@Param("phoneOrEmail") String phoneOrEmail);
+
+    /**
+     * 更新用户
+     * @param user
+     */
+    Integer updateUser(@Param("user") User user);
 }
