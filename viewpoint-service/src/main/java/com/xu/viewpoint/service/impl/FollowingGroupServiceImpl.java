@@ -6,6 +6,8 @@ import com.xu.viewpoint.service.FollowingGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author: xuJing
  * @date: 2024/11/22 10:05
@@ -33,5 +35,17 @@ public class FollowingGroupServiceImpl implements FollowingGroupService {
     @Override
     public FollowingGroup getById(Long id){
         return followingGroupDao.getById(id);
+    }
+
+
+    /**
+     * 根据用户id查询所有分组
+     *
+     * @param userId
+     */
+    @Override
+    public List<FollowingGroup> getByUserId(Long userId) {
+        List<FollowingGroup> groupList = followingGroupDao.getByUserId(userId);
+        return null;
     }
 }

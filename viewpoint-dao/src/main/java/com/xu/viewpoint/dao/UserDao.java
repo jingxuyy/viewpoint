@@ -5,6 +5,9 @@ import com.xu.viewpoint.dao.domain.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author 86136
  */
@@ -51,4 +54,11 @@ public interface UserDao {
      * @param user
      */
     Integer updateUser(@Param("user") User user);
+
+    /**
+     * 根据用户id集合查询用户详细信息
+     * @param ids
+     * @return
+     */
+    List<UserInfo> getUserInfoByUserIds(@Param("ids") Set<Long> ids);
 }

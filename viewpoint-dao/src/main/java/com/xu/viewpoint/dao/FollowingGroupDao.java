@@ -4,6 +4,8 @@ import com.xu.viewpoint.dao.domain.FollowingGroup;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @author 86136
  */
@@ -22,4 +24,10 @@ public interface FollowingGroupDao {
      * @param id
      */
     FollowingGroup getById(@Param("id") Long id);
+
+    /**
+     * 根据用户id查询所有分组
+     * @param userId
+     */
+    List<FollowingGroup> getByUserId(@Param("userId") Long userId);
 }

@@ -2,6 +2,7 @@ package com.xu.viewpoint.dao.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户关注分组表
@@ -45,6 +46,16 @@ public class FollowingGroup implements Serializable {
      */
 
     private Date updateTime;
+
+    private List<UserInfo> followingUserInfoList;
+
+    public List<UserInfo> getFollowingUserInfoList() {
+        return followingUserInfoList;
+    }
+
+    public void setFollowingUserInfoList(List<UserInfo> followingUserInfoList) {
+        this.followingUserInfoList = followingUserInfoList;
+    }
 
     public Long getId() {
         return id;

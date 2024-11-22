@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -193,6 +195,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long id) {
         return userDao.getUserById(id);
+    }
+
+    /**
+     * 根据id集合批量查询用户详细信息
+     *
+     * @param ids
+     */
+    @Override
+    public List<UserInfo> getUserInfoByUserIds(Set<Long> ids) {
+
+        List<UserInfo> userInfoList = userDao.getUserInfoByUserIds(ids);
+        return userInfoList;
     }
 
 

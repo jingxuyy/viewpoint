@@ -92,4 +92,19 @@
         where
             tmp.pe like concat('%', #{phoneOrEmail}, '%')
     </select>
+    <select id="getUserInfoByUserIds" resultType="com.xu.viewpoint.dao.domain.UserInfo">
+        select
+            *
+        from
+            t_user_info
+        <where>
+            <if test="ids != null and ids.size > 0">
+                userId in
+                <foreach collection="ids" item="userId" index="index" open="(" close=")" separator=",">
+                    #{userId}
+                </foreach>
+            </if>
+        </where>
+
+    </select>
 </mapper>

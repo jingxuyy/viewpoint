@@ -36,4 +36,9 @@ public class UserConstant {
      * 默认关注分组
      */
     public static final String USER_FOLLOWING_GROUP_TYPE_DEFAULT = "2";
+
+    /**
+     * 全部关注名称
+     */
+    public static final String USER_FOLLOWING_GROUP_ALL_NAME = "全部关注";
 }

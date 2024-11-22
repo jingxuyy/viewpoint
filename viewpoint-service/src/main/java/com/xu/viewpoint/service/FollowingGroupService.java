@@ -2,6 +2,8 @@ package com.xu.viewpoint.service;
 
 import com.xu.viewpoint.dao.domain.FollowingGroup;
 
+import java.util.List;
+
 /**
  * @author 86136
  */
@@ -18,4 +20,10 @@ public interface FollowingGroupService {
      * @param id
      */
     public FollowingGroup getById(Long id);
+
+    /**
+     * 根据用户id查询所有分组
+     * @param userId
+     */
+    List<FollowingGroup> getByUserId(Long userId);
 }

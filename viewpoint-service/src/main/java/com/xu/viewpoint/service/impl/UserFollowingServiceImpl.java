@@ -5,6 +5,7 @@ import com.xu.viewpoint.dao.UserFollowingDao;
 import com.xu.viewpoint.dao.domain.FollowingGroup;
 import com.xu.viewpoint.dao.domain.User;
 import com.xu.viewpoint.dao.domain.UserFollowing;
+import com.xu.viewpoint.dao.domain.UserInfo;
 import com.xu.viewpoint.dao.domain.constant.UserConstant;
 import com.xu.viewpoint.dao.domain.exception.ConditionException;
 import com.xu.viewpoint.service.FollowingGroupService;
@@ -14,7 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author: xuJing
@@ -61,5 +66,61 @@ public class UserFollowingServiceImpl implements UserFollowingService {
         // 5. 设置新增时间，新增
         userFollowing.setCreateTime(new Date());
         userFollowingDao.addUserFollowing(userFollowing);
+    }
+
+    /**
+     * 获取当前用户的关注分组列表，需要返回所有分组，及其每个分组对应的关注用户信息
+     * @param userId
+     */
+    public List<FollowingGroup> getUserFollowingGroups(Long userId){
+
+        // 1. 根据userId 查询当前用户关注用户,并取得所有关注用户id的集合
+        List<UserFollowing> list = userFollowingDao.getUserFollowingGroups(userId);
+        Set<Long> followingIdSet = list.stream()
+                .map(UserFollowing::getFollowingId)
+                .collect(Collectors.toSet());
+
+        // 2. 根据关注的用户id集合，查询对应的用户具体详细信息
+        List<UserInfo> userInfoList = new ArrayList<>();
+        if(followingIdSet.size()>0){
+            userInfoList = userService.getUserInfoByUserIds(followingIdSet);
+        }
+
+        // 3. 根据每个userFollowing对象，设置其关注用户的具体信息
+        for (UserFollowing userFollowing : list) {
+            for (UserInfo userInfo : userInfoList) {
+                if(userFollowing.getFollowingId().equals(userInfo.getUserId())){
+                    userFollowing.setUserInfo(userInfo);
+                }
+            }
+        }
+
+        // 4. 根据用户id查询，用户创建的分组和默认分组
+        List<FollowingGroup> groupList = followingGroupService.getByUserId(userId);
+
+        // 5. 提供一个全部分组，即把所有关注对象放在这个组里
+        FollowingGroup allGroup = new FollowingGroup();
+        allGroup.setName(UserConstant.USER_FOLLOWING_GROUP_ALL_NAME);
+        allGroup.setFollowingUserInfoList(userInfoList);
+
+        // 6. 提供一个分组集合，将全部分组添加
+        List<FollowingGroup> result = new ArrayList<>();
+        result.add(allGroup);
+
+        // 7. 再根据不同分组，创建不同结果，装入分组集合
+        for (FollowingGroup followingGroup : groupList) {
+            List<UserInfo> infoList = new ArrayList<>();
+            for (UserFollowing userFollowing : list) {
+                if(followingGroup.getId().equals(userFollowing.getGroupId())){
+                    infoList.add(userFollowing.getUserInfo());
+                }
+            }
+            followingGroup.setFollowingUserInfoList(infoList);
+            result.add(followingGroup);
+        }
+
+        return result;
+
+
     }
 }

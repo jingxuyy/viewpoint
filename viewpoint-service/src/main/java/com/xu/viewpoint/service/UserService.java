@@ -2,6 +2,10 @@ package com.xu.viewpoint.service;
 
 
 import com.xu.viewpoint.dao.domain.User;
+import com.xu.viewpoint.dao.domain.UserInfo;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author: xuJing
@@ -48,4 +52,10 @@ public interface UserService {
      * @param followingId
      */
     User getUserById(Long id);
+
+    /**
+     * 根据id集合批量查询用户详细信息
+     * @param ids
+     */
+    List<UserInfo> getUserInfoByUserIds(Set<Long> ids);
 }

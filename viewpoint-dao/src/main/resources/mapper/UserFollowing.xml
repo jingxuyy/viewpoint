@@ -28,4 +28,13 @@
             followingId = #{followingId}
 
     </delete>
+    <select id="getUserFollowingGroups" resultType="com.xu.viewpoint.dao.domain.UserFollowing">
+        select
+            *
+        from
+            t_user_following
+        where
+            userId = #{userId}
+
+    </select>
 </mapper>
