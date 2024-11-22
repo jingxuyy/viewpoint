@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.viewpoint.dao.FollowingGroupDao">
+
+    <select id="getByType" resultType="com.xu.viewpoint.dao.domain.FollowingGroup">
+        select
+            *
+        from
+            t_following_group
+        where
+            `type` = #{type}
+    </select>
+    <select id="getById" resultType="com.xu.viewpoint.dao.domain.FollowingGroup">
+        select
+            *
+        from
+            t_following_group
+        where
+            id = #{id}
+    </select>
+</mapper>

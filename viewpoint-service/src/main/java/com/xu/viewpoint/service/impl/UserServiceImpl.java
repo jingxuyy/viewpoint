@@ -185,6 +185,17 @@ public class UserServiceImpl implements UserService {
         userDao.updateUser(user);
     }
 
+    /**
+     * 根据id查询用户
+     *
+     * @param id
+     */
+    @Override
+    public User getUserById(Long id) {
+        return userDao.getUserById(id);
+    }
+
+
     // ----------------------------------------------- private -----------------------------------------------
 
     /**

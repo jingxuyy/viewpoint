@@ -42,4 +42,10 @@ public interface UserService {
      * @param user
      */
     void updateUser(User user) throws Exception;
+
+    /**
+     * 根据id查询用户
+     * @param followingId
+     */
+    User getUserById(Long id);
 }

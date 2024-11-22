@@ -31,4 +31,9 @@ public class UserConstant {
      * 默认昵称
      */
     public static final String DEFAULT_NICK = "萌萌";
+
+    /**
+     * 默认关注分组
+     */
+    public static final String USER_FOLLOWING_GROUP_TYPE_DEFAULT = "2";
 }
