@@ -1,5 +1,6 @@
 package com.xu.viewpoint.api.support;
 
+import com.mysql.cj.util.StringUtils;
 import com.xu.viewpoint.dao.domain.exception.ConditionException;
 import com.xu.viewpoint.service.util.TokenUtil;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,9 @@ public class UserSupport {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         assert requestAttributes != null;
         String token = requestAttributes.getRequest().getHeader("token");
+        if(StringUtils.isNullOrEmpty(token)){
+            throw new ConditionException("未登录！");
+        }
         Long userId = TokenUtil.verifyToken(token);
         if(userId<0){
             throw new ConditionException("非法用户！");

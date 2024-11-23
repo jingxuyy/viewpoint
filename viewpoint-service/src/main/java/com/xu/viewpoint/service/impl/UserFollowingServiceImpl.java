@@ -75,7 +75,7 @@ public class UserFollowingServiceImpl implements UserFollowingService {
     public List<FollowingGroup> getUserFollowingGroups(Long userId){
 
         // 1. 根据userId 查询当前用户关注用户,并取得所有关注用户id的集合
-        List<UserFollowing> list = userFollowingDao.getUserFollowingGroups(userId);
+        List<UserFollowing> list = userFollowingDao.getUserFollowings(userId);
         Set<Long> followingIdSet = list.stream()
                 .map(UserFollowing::getFollowingId)
                 .collect(Collectors.toSet());
@@ -120,7 +120,43 @@ public class UserFollowingServiceImpl implements UserFollowingService {
         }
 
         return result;
+    }
 
 
+    /**
+     * 获取当前用户的粉丝列表
+     * @param userId
+     */
+    public List<UserFollowing> getUserFans(Long userId){
+        List<UserFollowing> fanList = userFollowingDao.getUserFans(userId);
+
+        Set<Long> fanIdSet = fanList.stream()
+                .map(UserFollowing::getUserId)
+                .collect(Collectors.toSet());
+
+        // 2. 根据粉丝id集合，查询对应的用户具体详细信息
+        List<UserInfo> userInfoList = new ArrayList<>();
+        if(fanIdSet.size()>0){
+            userInfoList = userService.getUserInfoByUserIds(fanIdSet);
+        }
+
+        // 3. 查看有没有互相关注的情况
+        // 3.1 获取当前用户的关注列表
+        List<UserFollowing> followingList = userFollowingDao.getUserFollowings(userId);
+        for (UserFollowing fan : fanList) {
+            for (UserInfo userInfo : userInfoList) {
+                if(fan.getUserId().equals(userInfo.getUserId())){
+                    fan.setUserInfo(userInfo);
+                    userInfo.setFollowed(false);
+                }
+            }
+            // 3.2 如果互粉，则设置状态
+            for (UserFollowing userFollowing : followingList) {
+                if(fan.getUserId().equals(userFollowing.getFollowingId())){
+                    fan.getUserInfo().setFollowed(true);
+                }
+            }
+        }
+        return fanList;
     }
 }

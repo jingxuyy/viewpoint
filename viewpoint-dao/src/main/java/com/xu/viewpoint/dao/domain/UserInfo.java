@@ -66,7 +66,15 @@ public class UserInfo implements Serializable {
     private Date updateTime;
 
 
+    private Boolean followed;
 
+    public Boolean getFollowed() {
+        return followed;
+    }
+
+    public void setFollowed(Boolean followed) {
+        this.followed = followed;
+    }
 
     /**
      * 主键

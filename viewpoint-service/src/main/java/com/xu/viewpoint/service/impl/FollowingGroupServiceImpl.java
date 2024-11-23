@@ -46,6 +46,6 @@ public class FollowingGroupServiceImpl implements FollowingGroupService {
     @Override
     public List<FollowingGroup> getByUserId(Long userId) {
         List<FollowingGroup> groupList = followingGroupDao.getByUserId(userId);
-        return null;
+        return groupList;
     }
 }

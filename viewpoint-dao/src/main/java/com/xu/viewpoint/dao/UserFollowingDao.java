@@ -29,5 +29,11 @@ public interface UserFollowingDao {
      * 根据userId查询用户关注列表
      * @param userId
      */
-    List<UserFollowing> getUserFollowingGroups(@Param("userId") Long userId);
+    List<UserFollowing> getUserFollowings(@Param("userId") Long userId);
+
+    /**
+     * 根据用户id查询对应粉丝列表，即此时的id是followingId
+     * @param followingId
+     */
+    List<UserFollowing> getUserFans(@Param("followingId") Long followingId);
 }

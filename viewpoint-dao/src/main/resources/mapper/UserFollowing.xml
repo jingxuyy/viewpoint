@@ -28,7 +28,7 @@
             followingId = #{followingId}
 
     </delete>
-    <select id="getUserFollowingGroups" resultType="com.xu.viewpoint.dao.domain.UserFollowing">
+    <select id="getUserFollowings" resultType="com.xu.viewpoint.dao.domain.UserFollowing">
         select
             *
         from
@@ -36,5 +36,13 @@
         where
             userId = #{userId}
 
+    </select>
+    <select id="getUserFans" resultType="com.xu.viewpoint.dao.domain.UserFollowing">
+        select
+            *
+        from
+            t_user_following
+        where
+            followingId = #{followingId}
     </select>
 </mapper>
