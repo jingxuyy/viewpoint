@@ -30,4 +30,17 @@ public interface FollowingGroupDao {
      * @param userId
      */
     List<FollowingGroup> getByUserId(@Param("userId") Long userId);
+
+    /**
+     * 插入分组
+     * @param followingGroup
+     * @return
+     */
+    Integer insertFollowingGroup(@Param("followingGroup") FollowingGroup followingGroup);
+
+    /**
+     * 获取用户所有分组
+     * @param userId
+     */
+    List<FollowingGroup> getUserFollowingGroup(Long userId);
 }

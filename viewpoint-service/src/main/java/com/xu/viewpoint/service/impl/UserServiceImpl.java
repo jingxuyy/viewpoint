@@ -1,7 +1,9 @@
 package com.xu.viewpoint.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.mysql.cj.util.StringUtils;
 import com.xu.viewpoint.dao.UserDao;
+import com.xu.viewpoint.dao.domain.PageResult;
 import com.xu.viewpoint.dao.domain.User;
 import com.xu.viewpoint.dao.domain.UserInfo;
 import com.xu.viewpoint.dao.domain.constant.UserConstant;
@@ -13,9 +15,7 @@ import com.xu.viewpoint.service.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -207,6 +207,36 @@ public class UserServiceImpl implements UserService {
 
         List<UserInfo> userInfoList = userDao.getUserInfoByUserIds(ids);
         return userInfoList;
+    }
+
+    /**
+     * 更新用户详细信息
+     *
+     * @param userInfo
+     */
+    @Override
+    public void updateUserInfo(UserInfo userInfo) {
+        userInfo.setUpdateTime(new Date());
+        userDao.updateUserInfo(userInfo);
+    }
+
+    /**
+     * 条件分页查询，条件  根据nick查询 可有可无
+     * @param param
+     */
+    @Override
+    public PageResult<UserInfo> pageListUserInfo(JSONObject param) {
+        Integer no = param.getInteger("no");
+        Integer size = param.getInteger("size");
+        param.put("start", (no-1)*size);
+        param.put("limit", size);
+        Integer total = userDao.pageCountUserInfo(param);
+
+        List<UserInfo> list = new ArrayList<>();
+        if(total > 0){
+            list = userDao.pageListUserInfo(param);
+        }
+        return new PageResult<>(total, list);
     }
 
 

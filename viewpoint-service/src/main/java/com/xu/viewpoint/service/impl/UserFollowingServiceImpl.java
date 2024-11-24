@@ -159,4 +159,70 @@ public class UserFollowingServiceImpl implements UserFollowingService {
         }
         return fanList;
     }
+
+    /**
+     * 根据给定的用户详细列表，检查当前用户userId是否存在关注情况
+     *
+     * @param list
+     * @param userId
+     */
+    @Override
+    public List<UserInfo> checkFollowingStatus(List<UserInfo> list, Long userId) {
+        List<UserFollowing> followingList = userFollowingDao.getUserFollowings(userId);
+        for (UserInfo userInfo : list) {
+            userInfo.setFollowed(false);
+            for (UserFollowing userFollowing : followingList) {
+                if(userFollowing.getFollowingId().equals(userInfo.getUserId())){
+                    userInfo.setFollowed(true);
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 用户添加自定义分组
+     *
+     * @param followingGroup
+     */
+    @Override
+    public Long addUserFollowingGroup(FollowingGroup followingGroup) {
+
+        followingGroup.setCreateTime(new Date());
+        followingGroup.setType(UserConstant.USER_FOLLOWING_GROUP_TYPE_USER);
+        followingGroupService.insertFollowingGroup(followingGroup);
+        return followingGroup.getId();
+    }
+
+    /**
+     * 获取用户所拥有的全部分组
+     *
+     * @param userId
+     */
+    @Override
+    public List<FollowingGroup> getUserFollowingGroup(Long userId) {
+        List<FollowingGroup> followingGroupList = followingGroupService.getUserFollowingGroup(userId);
+        return followingGroupList;
+    }
+
+    /**
+     * 取消关注（删除关注）
+     *
+     * @param userId
+     * @param followingId
+     */
+    @Override
+    public void deleteUserFollowing(Long userId, Long followingId) {
+        userFollowingDao.deleteUserFollowing(userId, followingId);
+    }
+
+    /**
+     * 修改关注信息（即修改关注人分组）
+     *
+     * @param userFollowing
+     */
+    @Override
+    public void updateUserFollowing(UserFollowing userFollowing) {
+        userFollowingDao.updateUserFollowing(userFollowing);
+    }
 }

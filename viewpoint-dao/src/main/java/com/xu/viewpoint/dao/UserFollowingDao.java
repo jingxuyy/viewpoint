@@ -1,5 +1,6 @@
 package com.xu.viewpoint.dao;
 
+import com.xu.viewpoint.dao.domain.FollowingGroup;
 import com.xu.viewpoint.dao.domain.UserFollowing;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -36,4 +37,10 @@ public interface UserFollowingDao {
      * @param followingId
      */
     List<UserFollowing> getUserFans(@Param("followingId") Long followingId);
+
+    /**
+     * 修改关注信息 （即修改关注人分组）
+     * @param userFollowing
+     */
+    void updateUserFollowing(@Param("userFollowing") UserFollowing userFollowing);
 }

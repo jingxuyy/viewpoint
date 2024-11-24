@@ -38,6 +38,11 @@ public class UserConstant {
     public static final String USER_FOLLOWING_GROUP_TYPE_DEFAULT = "2";
 
     /**
+     * 用户自定义分组类型
+     */
+    public static final String USER_FOLLOWING_GROUP_TYPE_USER = "3";
+
+    /**
      * 全部关注名称
      */
     public static final String USER_FOLLOWING_GROUP_ALL_NAME = "全部关注";

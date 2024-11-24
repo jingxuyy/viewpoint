@@ -58,6 +58,29 @@
         where
             id = #{user.id}
     </update>
+    <update id="updateUserInfo">
+        update
+            t_user_info
+        set
+            <if test="userInfo.nick != null and userInfo.nick != ''">
+                nick = #{userInfo.nick},
+            </if>
+            <if test="userInfo.avatar != null and userInfo.avatar != ''">
+                avatar = #{userInfo.avatar},
+            </if>
+            <if test="userInfo.gender != null and userInfo.gender != ''">
+                gender = #{userInfo.gender},
+            </if>
+            <if test="userInfo.birth != null and userInfo.birth != ''">
+                birth = #{userInfo.birth},
+            </if>
+            <if test="userInfo.sign != null and userInfo.sign != ''">
+                sign = #{userInfo.sign},
+            </if>
+            updateTime = #{userInfo.updateTime}
+        where
+            userId = #{userInfo.userId}
+    </update>
 
     <select id="getUserByPhone" resultType="com.xu.viewpoint.dao.domain.User">
         select
@@ -106,5 +129,29 @@
             </if>
         </where>
 
+    </select>
+    <select id="pageCountUserInfo" resultType="java.lang.Integer">
+        select
+            count(1)
+        from
+            t_user_info
+        <where>
+            <if test="param.nick != null and param.nick != '' ">
+                nick like concat('%', #{param.nick}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="pageListUserInfo" resultType="com.xu.viewpoint.dao.domain.UserInfo">
+        select
+            *
+        from
+            t_user_info
+        <where>
+            <if test="param.nick != null and param.nick != '' ">
+                nick like concat('%', #{param.nick}, '%')
+            </if>
+        </where>
+        order by id desc
+        limit #{param.start}, #{param.limit}
     </select>
 </mapper>

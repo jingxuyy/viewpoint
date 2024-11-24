@@ -1,6 +1,8 @@
 package com.xu.viewpoint.service;
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.xu.viewpoint.dao.domain.PageResult;
 import com.xu.viewpoint.dao.domain.User;
 import com.xu.viewpoint.dao.domain.UserInfo;
 
@@ -58,4 +60,16 @@ public interface UserService {
      * @param ids
      */
     List<UserInfo> getUserInfoByUserIds(Set<Long> ids);
+
+    /**
+     * 更新用户详细信息
+     * @param userInfo
+     */
+    void updateUserInfo(UserInfo userInfo);
+
+    /**
+     * 条件分页查询，条件  根据nick查询 可有可无
+     * @param param
+     */
+    PageResult<UserInfo> pageListUserInfo(JSONObject param);
 }

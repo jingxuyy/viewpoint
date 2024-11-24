@@ -48,4 +48,25 @@ public class FollowingGroupServiceImpl implements FollowingGroupService {
         List<FollowingGroup> groupList = followingGroupDao.getByUserId(userId);
         return groupList;
     }
+
+    /**
+     * 插入分组
+     *
+     * @param followingGroup
+     */
+    @Override
+    public void insertFollowingGroup(FollowingGroup followingGroup) {
+        followingGroupDao.insertFollowingGroup(followingGroup);
+    }
+
+    /**
+     * 获取用户所有分组
+     *
+     * @param userId
+     */
+    @Override
+    public List<FollowingGroup> getUserFollowingGroup(Long userId) {
+        List<FollowingGroup> result = followingGroupDao.getUserFollowingGroup(userId);
+        return result;
+    }
 }

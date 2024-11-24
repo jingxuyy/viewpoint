@@ -1,11 +1,13 @@
 package com.xu.viewpoint.dao;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xu.viewpoint.dao.domain.User;
 import com.xu.viewpoint.dao.domain.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -61,4 +63,23 @@ public interface UserDao {
      * @return
      */
     List<UserInfo> getUserInfoByUserIds(@Param("ids") Set<Long> ids);
+
+    /**
+     * 更新用户详细信息
+     * @param userInfo
+     */
+    Integer updateUserInfo(@Param("userInfo") UserInfo userInfo);
+
+    /**
+     * 条件分页查询总数
+     * @param param
+     * @return
+     */
+    Integer pageCountUserInfo(@Param("param") Map<String, Object> param);
+
+    /**
+     * 条件分页查询
+     * @param param
+     */
+    List<UserInfo> pageListUserInfo(@Param("param") Map<String, Object> param);
 }

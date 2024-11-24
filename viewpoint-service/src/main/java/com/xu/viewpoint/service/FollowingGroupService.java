@@ -26,4 +26,16 @@ public interface FollowingGroupService {
      * @param userId
      */
     List<FollowingGroup> getByUserId(Long userId);
+
+    /**
+     * 插入分组
+     * @param followingGroup
+     */
+    void insertFollowingGroup(FollowingGroup followingGroup);
+
+    /**
+     * 获取用户所有分组
+     * @param userId
+     */
+    List<FollowingGroup> getUserFollowingGroup(Long userId);
 }

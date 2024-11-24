@@ -18,6 +18,14 @@
                 #{userFollowing.createTime}
             )
     </insert>
+    <update id="updateUserFollowing">
+        update
+            t_user_following
+        set
+            groupId = #{userFollowing.groupId}
+        where
+            userId = #{userFollowing.userId} and followingId = #{userFollowing.followingId}
+    </update>
 
     <delete id="deleteUserFollowing">
         delete from
@@ -45,4 +53,5 @@
         where
             followingId = #{followingId}
     </select>
+
 </mapper>
