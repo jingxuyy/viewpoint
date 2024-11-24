@@ -4,3 +4,12 @@ spring:
     url: jdbc:mysql://localhost:3306/viewpoint?useUnicode=true&characterEncoding=utf8
     username: root
     password: root
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+
+rocketmq:
+  name:
+    server:
+      address: 127.0.0.1:9876
