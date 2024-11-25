@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.viewpoint.dao.AuthRoleElementOperationDao">
+
+    <resultMap id="AuthElementOperationResultMap" type="com.xu.viewpoint.dao.domain.auth.AuthRoleElementOperation">
+        <id column="id" property="id"/>
+        <result column="roleId" property="roleId"/>
+        <result column="elementOperationId" property="elementOperationId"/>
+        <association property="authElementOperation" javaType="com.xu.viewpoint.dao.domain.auth.AuthElementOperation">
+            <result column="elementName" property="elementName"/>
+            <result column="elementCode" property="elementCode"/>
+            <result column="operationType" property="operationType"/>
+        </association>
+    </resultMap>
+
+    <select id="getRoleElementOperationsByRoleIds" resultMap="AuthElementOperationResultMap">
+        select
+            ar.*,
+            ae.elementName,
+            ae.elementCode,
+            ae.operationType
+        from
+            t_auth_role_element_operation ar
+        left join
+            t_auth_element_operation ae
+        on
+            ar.elementOperationId = ae.id
+        where
+            ar.roleId
+        in
+        <foreach collection="roleIdSet" open="(" close=")" separator="," item="roleId">
+            #{roleId}
+        </foreach>
+    </select>
+</mapper>

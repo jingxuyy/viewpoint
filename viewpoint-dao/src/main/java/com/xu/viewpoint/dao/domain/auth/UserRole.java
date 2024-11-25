@@ -34,7 +34,29 @@ public class UserRole implements Serializable {
     private Date createTime;
 
 
+    private String roleName;
+
+
+    private String roleCode;
+
+
     private static final long serialVersionUID = 1L;
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getRoleCode() {
+        return roleCode;
+    }
+
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode;
+    }
 
     public Long getId() {
         return id;
