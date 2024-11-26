@@ -1,8 +1,11 @@
 package com.xu.viewpoint.api;
 
 import com.xu.viewpoint.api.support.UserSupport;
+import com.xu.viewpoint.dao.annotation.ApiLimitedRole;
+import com.xu.viewpoint.dao.annotation.DataLimited;
 import com.xu.viewpoint.dao.domain.JsonResponse;
 import com.xu.viewpoint.dao.domain.UserMoment;
+import com.xu.viewpoint.dao.domain.constant.AuthRoleConstant;
 import com.xu.viewpoint.service.UserMomentsService;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -30,8 +33,12 @@ public class UserMomentsApi {
 
     /**
      * 用户发布动态
+     * <br/>
+     * AuthRoleConstant.ROLE_CODE_LV0 表示此接口Lv0角色无法调用
      * @param userMoment
      */
+    @ApiLimitedRole(limitedRoleCodeList = {AuthRoleConstant.ROLE_CODE_LV0})
+    @DataLimited
     @PostMapping("/user-moments")
     public JsonResponse<String> addUserMoments(@RequestBody UserMoment userMoment) throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
         Long userId = userSupport.getCurrentUserId();
