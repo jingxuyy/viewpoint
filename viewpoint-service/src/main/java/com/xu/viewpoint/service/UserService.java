@@ -7,6 +7,7 @@ import com.xu.viewpoint.dao.domain.User;
 import com.xu.viewpoint.dao.domain.UserInfo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -72,4 +73,23 @@ public interface UserService {
      * @param param
      */
     PageResult<UserInfo> pageListUserInfo(JSONObject param);
+
+    /**
+     * 双令牌登录
+     * @param user
+     */
+    Map<String, Object> loginForDts(User user) throws Exception;
+
+    /**
+     * 退出登录
+     * @param refreshToken
+     * @param userId
+     */
+    void logout(String refreshToken, Long userId);
+
+    /**
+     * 根据refreshToken刷新accessToken
+     * @param refreshToken
+     */
+    String refreshAccessToken(String refreshToken) throws Exception;
 }

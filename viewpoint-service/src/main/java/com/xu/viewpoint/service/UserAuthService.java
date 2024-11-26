@@ -9,4 +9,10 @@ public interface UserAuthService {
      * @param userId
      */
     UserAuthorities getUserAuthorities(Long userId);
+
+    /**
+     * 用户注册，添加默认角色
+     * @param id
+     */
+    void addUserDefaultRole(Long id);
 }

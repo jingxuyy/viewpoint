@@ -14,4 +14,6 @@ public interface UserRoleDao {
      * @param userId
      */
     List<UserRole> getUserRoleByUserId(@Param("userId") Long userId);
+
+    Integer addUserRole(@Param("userRole") UserRole userRole);
 }

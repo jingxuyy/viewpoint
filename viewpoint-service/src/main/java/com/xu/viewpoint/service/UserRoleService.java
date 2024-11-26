@@ -16,4 +16,10 @@ public interface UserRoleService {
      * @param userId
      */
     List<UserRole> getUserRoleByUserId(Long userId);
+
+    /**
+     * 添加 userRole
+     * @param userRole
+     */
+    void addUserRole(UserRole userRole);
 }

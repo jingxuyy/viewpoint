@@ -41,6 +41,19 @@
             #{userInfo.sign}
         )
     </insert>
+    <insert id="addRefreshToken">
+        insert into
+            t_refresh_token(
+                userId,
+                refreshToken,
+                createTime
+                )
+        values (
+             #{userId},
+             #{refreshToken},
+             #{date}
+                )
+    </insert>
     <update id="updateUser">
         update
             t_user
@@ -81,6 +94,12 @@
         where
             userId = #{userInfo.userId}
     </update>
+    <delete id="deleteRefreshToken">
+        delete from
+            t_refresh_token
+        where
+            refreshToken = #{refreshToken} and userId = #{userId}
+    </delete>
 
     <select id="getUserByPhone" resultType="com.xu.viewpoint.dao.domain.User">
         select
@@ -153,5 +172,13 @@
         </where>
         order by id desc
         limit #{param.start}, #{param.limit}
+    </select>
+    <select id="getRefreshTokenDetailByRefreshToken" resultType="com.xu.viewpoint.dao.domain.RefreshTokenDetail">
+        select
+            *
+        from
+            t_refresh_token
+        where
+            refreshToken = #{refreshToken}
     </select>
 </mapper>

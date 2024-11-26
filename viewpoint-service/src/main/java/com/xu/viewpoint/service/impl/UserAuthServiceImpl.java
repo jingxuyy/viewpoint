@@ -1,15 +1,14 @@
 package com.xu.viewpoint.service.impl;
 
-import com.xu.viewpoint.dao.domain.auth.AuthRoleElementOperation;
-import com.xu.viewpoint.dao.domain.auth.AuthRoleMenu;
-import com.xu.viewpoint.dao.domain.auth.UserAuthorities;
-import com.xu.viewpoint.dao.domain.auth.UserRole;
+import com.xu.viewpoint.dao.domain.auth.*;
+import com.xu.viewpoint.dao.domain.constant.AuthRoleConstant;
 import com.xu.viewpoint.service.AuthRoleService;
 import com.xu.viewpoint.service.UserAuthService;
 import com.xu.viewpoint.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -56,5 +55,20 @@ public class UserAuthServiceImpl implements UserAuthService {
         userAuthorities.setAuthRoleElementOperationList(roleElementOperationList);
         userAuthorities.setAuthRoleMenuList(authRoleMenuList);
         return userAuthorities;
+    }
+
+    /**
+     * 用户注册，添加默认角色
+     *
+     * @param id
+     */
+    @Override
+    public void addUserDefaultRole(Long id) {
+        UserRole userRole = new UserRole();
+        AuthRole role = authRoleService.getRoleByCode(AuthRoleConstant.ROLE_CODE_LV0);
+        userRole.setUserId(id);
+        userRole.setRoleId(role.getId());
+        userRole.setCreateTime(new Date());
+        userRoleService.addUserRole(userRole);
     }
 }

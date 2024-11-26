@@ -1,5 +1,6 @@
 package com.xu.viewpoint.service;
 
+import com.xu.viewpoint.dao.domain.auth.AuthRole;
 import com.xu.viewpoint.dao.domain.auth.AuthRoleElementOperation;
 import com.xu.viewpoint.dao.domain.auth.AuthRoleMenu;
 
@@ -21,4 +22,10 @@ public interface AuthRoleService {
      * @param roleIdSet
      */
     List<AuthRoleMenu> getRoleMenusByRoleIds(Set<Long> roleIdSet);
+
+    /**
+     * 根据角色编码获取角色
+     * @param roleCode
+     */
+    AuthRole getRoleByCode(String roleCode);
 }

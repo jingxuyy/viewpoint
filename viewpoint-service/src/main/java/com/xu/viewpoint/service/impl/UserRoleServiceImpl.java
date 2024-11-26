@@ -28,4 +28,14 @@ public class UserRoleServiceImpl implements UserRoleService {
         List<UserRole> result = userRoleDao.getUserRoleByUserId(userId);
         return result;
     }
+
+    /**
+     * 添加 userRole
+     *
+     * @param userRole
+     */
+    @Override
+    public void addUserRole(UserRole userRole) {
+        userRoleDao.addUserRole(userRole);
+    }
 }

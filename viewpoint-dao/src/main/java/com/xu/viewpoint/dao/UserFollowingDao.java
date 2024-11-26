@@ -1,6 +1,5 @@
 package com.xu.viewpoint.dao;
 
-import com.xu.viewpoint.dao.domain.FollowingGroup;
 import com.xu.viewpoint.dao.domain.UserFollowing;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

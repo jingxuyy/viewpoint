@@ -1,11 +1,12 @@
 package com.xu.viewpoint.dao;
 
-import com.alibaba.fastjson.JSONObject;
+import com.xu.viewpoint.dao.domain.RefreshTokenDetail;
 import com.xu.viewpoint.dao.domain.User;
 import com.xu.viewpoint.dao.domain.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,4 +83,28 @@ public interface UserDao {
      * @param param
      */
     List<UserInfo> pageListUserInfo(@Param("param") Map<String, Object> param);
+
+    /**
+     * 根据userId删除refreshToken
+     * @param refreshToken
+     * @param userId
+     */
+    Integer deleteRefreshToken(@Param("refreshToken") String refreshToken,
+                               @Param("userId") Long userId);
+
+    /**
+     * 添加refreshToken
+     * @param refreshToken
+     * @param userId
+     * @param date
+     */
+    Integer addRefreshToken(@Param("refreshToken") String refreshToken,
+                            @Param("userId") Long userId,
+                            @Param("date") Date date);
+
+    /**
+     * 根据refreshToken查询
+     * @param refreshToken
+     */
+    RefreshTokenDetail getRefreshTokenDetailByRefreshToken(@Param("refreshToken") String refreshToken);
 }
