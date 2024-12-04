@@ -11,14 +11,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+
+import java.io.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+
 
 /**
  * @author: xuJing
@@ -45,7 +45,7 @@ public class FastDFSUtil {
 
     private static final String UPLOADED_NO_KEY = "uploaded-no-key";
 
-    private static final int SLICE_SIZE = 1024*1024*10;
+    private static final int SLICE_SIZE = 1024*1024;
 
     /**
      * 获取文件类型
@@ -71,12 +71,12 @@ public class FastDFSUtil {
     // 上传文件
     public String uploadCommonFile(MultipartFile file) throws IOException {
         Set<MetaData> metaDataSet = new HashSet<>();
-        String fileType = getFileType(file);
+        String fileType = this.getFileType(file);
         StorePath storePath = fastFileStorageClient.uploadFile(file.getInputStream(),
                 file.getSize(),
                 fileType,
                 metaDataSet);
-        return storePath.getFullPath();
+        return storePath.getPath();
     }
 
     // 断点上传文件
@@ -87,13 +87,13 @@ public class FastDFSUtil {
      * @throws IOException
      */
     public String uploadAppenderFile(MultipartFile file) throws IOException {
-        String fileType = getFileType(file);
+        String fileType = this.getFileType(file);
         String filename = file.getOriginalFilename();
         StorePath storePath = appendFileStorageClient.uploadAppenderFile(DEFAULT_GROUP_NAME,
                 file.getInputStream(),
                 file.getSize(),
                 fileType);
-        return storePath.getFullPath();
+        return storePath.getPath();
     }
 
     /**
@@ -143,7 +143,8 @@ public class FastDFSUtil {
         String fileType = getFileType(file);
         if(sliceNo == 1){
             // 第一个分片，即文件第一次上传
-            String path = uploadAppenderFile(file);
+            String path = this.uploadAppenderFile(file);
+            System.out.println(path);
             if(StringUtils.isNullOrEmpty(path)){
                 throw new ConditionException("上传失败");
             }
@@ -159,7 +160,8 @@ public class FastDFSUtil {
                 throw new ConditionException("上传失败");
             }
             // 断点上传，传入偏移量uploadedSize，也就是已经完成的数据大小
-            modifyAppenderFile(file, filepath, uploadedSize);
+            this.modifyAppenderFile(file, filepath, uploadedSize);
+//            this.modifyAppenderFile(file, filepath, file.getSize());
 
             // 将redis中分片完成数量+1
             redisTemplate.opsForValue().increment(uploadedNoKey);
@@ -234,9 +236,21 @@ public class FastDFSUtil {
     }
     public File multipartFileToFile(MultipartFile multipartFile) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
-        String[] fileName = originalFilename.split("\\.");
-        File file = File.createTempFile(fileName[0], "." + fileName[1]);
+        int index = originalFilename.lastIndexOf(".");
+
+        String name = originalFilename.substring(0, index);
+        String type = originalFilename.substring(index);
+        File file = File.createTempFile(name, type);
+
         multipartFile.transferTo(file);
         return file;
     }
+
+
+
+
+
+
+
+
 }

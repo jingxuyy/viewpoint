@@ -19,7 +19,20 @@ rocketmq:
     server:
       address: 127.0.0.1:9876
 
+
 fdfs:
-  tracker-list: 192.168.59.100:22122
+  so-timeout: 6000	#修改之后的
+  connect-timeout: 6000	# 修改之后的
+  thumb-image:
+    height: 150
+    width: 150
+  tracker-list: 192.168.59.100:2024
+
+
+
+
+
+
+
 
 
