@@ -8,6 +8,11 @@ spring:
     host: 127.0.0.1
     port: 6379
 
+  servlet:
+    multipart:
+      max-file-size: 3GB
+      max-request-size: 3GB
+
 
 rocketmq:
   name:
@@ -16,3 +21,5 @@ rocketmq:
 
 fdfs:
   tracker-list: 192.168.59.100:22122
+
+

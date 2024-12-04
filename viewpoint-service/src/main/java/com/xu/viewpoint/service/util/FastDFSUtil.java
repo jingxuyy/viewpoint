@@ -11,7 +11,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +44,8 @@ public class FastDFSUtil {
     private static final String UPLOADED_SIZE_KEY = "uploaded-size-key";
 
     private static final String UPLOADED_NO_KEY = "uploaded-no-key";
+
+    private static final int SLICE_SIZE = 1024*1024*10;
 
     /**
      * 获取文件类型
@@ -192,4 +197,46 @@ public class FastDFSUtil {
         fastFileStorageClient.deleteFile(filePath);
     }
 
+
+    public void convertFileToSlices(MultipartFile multipartFile) throws IOException {
+        // 将MultipartFile转换成Java原生File类型
+        String filename = multipartFile.getOriginalFilename();
+        String fileType = getFileType(multipartFile);
+        File file = multipartFileToFile(multipartFile);
+
+        // 获取文件大小，定义计数器
+        long length = file.length();
+        long count = 1;
+
+        // 每SLICE_SIZE大小做一次循环，也就是将文件分片，每片大小为SLICE_SIZE
+        for(long i =0; i<length; i+=SLICE_SIZE){
+
+            // 借助RandomAccessFile获取文件定位读取指定大小
+            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+            randomAccessFile.seek(i);
+            System.out.println(randomAccessFile.getFilePointer());
+
+            byte[] bytes = new byte[SLICE_SIZE];
+            int len = randomAccessFile.read(bytes);
+
+            // 将分片的文件写入到指定位置
+            String path = "C:\\Users\\86136\\Desktop\\temp\\" + count +"."+ fileType;
+            File slice = new File(path);
+            FileOutputStream fos = new FileOutputStream(slice);
+            fos.write(bytes, 0, len);
+            fos.close();
+            randomAccessFile.close();
+            count++;
+        }
+
+        // 删除之前文件
+        file.delete();
+    }
+    public File multipartFileToFile(MultipartFile multipartFile) throws IOException {
+        String originalFilename = multipartFile.getOriginalFilename();
+        String[] fileName = originalFilename.split("\\.");
+        File file = File.createTempFile(fileName[0], "." + fileName[1]);
+        multipartFile.transferTo(file);
+        return file;
+    }
 }
