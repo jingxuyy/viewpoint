@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.viewpoint.dao.VideoDao">
+
+    <insert id="addVideo" keyProperty="id" useGeneratedKeys="true">
+        insert into t_video(
+                userId,
+                url,
+                thumbnail,
+                `title`,
+                `type`,
+                duration,
+                area,
+                description,
+                createTime
+            )
+        values (
+            #{video.userId},
+            #{video.url},
+            #{video.thumbnail},
+            #{video.title},
+            #{video.type},
+            #{video.duration},
+            #{video.area},
+            #{video.description},
+            #{video.createTime}
+            )
+    </insert>
+    <insert id="batchAddVideoTags">
+        insert into
+        t_video_tag(
+            videoId,
+            tagId,
+            createTime
+        )
+        values
+        <foreach collection="videoTagList" separator="," item="videoTag" open="(" close=")">
+                #{videoTag.videoId},
+                #{videoTag.tagId},
+                #{videoTag.createTime}
+            </foreach>
+    </insert>
+    <select id="pageCountVideos" resultType="java.lang.Integer">
+        select
+            count(1)
+        from
+            t_video
+        <where>
+            <if test="params.area != null and params.area != ''">
+                area = #{params.area}
+            </if>
+        </where>
+    </select>
+
+    <select id="pageListVideos" resultType="com.xu.viewpoint.dao.domain.Video">
+        select
+            *
+        from
+            t_video
+        <where>
+            <if test="params.area != null and params.area != ''">
+                area = #{params.area}
+            </if>
+        </where>
+        order by
+            id
+        desc
+        limit #{params.start}, #{params.limit}
+    </select>
+</mapper>
