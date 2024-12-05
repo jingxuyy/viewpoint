@@ -1,5 +1,6 @@
 package com.xu.viewpoint.service.util;
 
+import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
@@ -7,17 +8,16 @@ import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.mysql.cj.util.StringUtils;
 import com.xu.viewpoint.dao.domain.exception.ConditionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 
 
 /**
@@ -46,6 +46,9 @@ public class FastDFSUtil {
     private static final String UPLOADED_NO_KEY = "uploaded-no-key";
 
     private static final int SLICE_SIZE = 1024*1024;
+
+    @Value("${fdfs.http.storage-addr}")
+    private String httpFdfsStorageAddr;
 
     /**
      * 获取文件类型
@@ -247,10 +250,61 @@ public class FastDFSUtil {
     }
 
 
+    public void viewVideoOnlineBySlices(HttpServletRequest request, HttpServletResponse response, String path) throws Exception {
 
+        // 1. 根据分组和path查询存储在FastDFS服务器的对应文件信息
+        FileInfo fileInfo = fastFileStorageClient.queryFileInfo(DEFAULT_GROUP_NAME, path);
 
+        // 2. 获取文件大小和文件访问路径（通过nginx）
+        long totalFileSize = fileInfo.getFileSize();
+        String url = httpFdfsStorageAddr + path;
 
+        // 3. 构建http请求访问文件存储服务器
+        // 3.1 构建请求头
+        Enumeration<String> headerNames = request.getHeaderNames();
+        Map<String, Object> headers = new HashMap<>();
+        while (headerNames.hasMoreElements()){
+            String header = headerNames.nextElement();
+            headers.put(header, request.getHeader(header));
+        }
 
+        // 3.2 构建本次请求文件的范围,为响应头做参数准备
+        String rangeStr = request.getHeader("Range");
+        String[] range;
+        if(StringUtils.isNullOrEmpty(rangeStr)){
+            rangeStr = "bytes=0-" + (totalFileSize-1);
+            // bytes=0-1023     [, 0, 1023]
+        }
 
+        range = rangeStr.split("bytes=|-");
 
+        // 设定默认起始位置
+        long begin = 0;
+        if(range.length >= 2){
+            // 有起始位置，则使用起始位置
+            begin = Long.parseLong(range[1]);
+        }
+        // 设定默认结束位置
+        long end = totalFileSize -1;
+        if(range.length >= 3){
+            // 有结束位置，则使用结束位置
+            end = Long.parseLong(range[2]);
+        }
+        // 设置响应文件总长度
+        long len = (end - begin) +1;
+
+        // 设置响应头 contentRange 说明起始，结束，总大小
+        String contentRange = "bytes " + begin + "-" + end + "/" + totalFileSize;
+        response.setHeader("Content-Range", contentRange);
+        response.setHeader("Accept-Ranges", "bytes");
+        response.setHeader("Content-Type", "video/mp4");
+        response.setContentLength((int) len);
+
+        // 设置响应码
+        response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+
+        // 4. 进行http请求
+        HttpUtil.get(url, headers, response);
+
+    }
 }

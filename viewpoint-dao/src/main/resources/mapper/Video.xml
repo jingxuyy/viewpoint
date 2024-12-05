@@ -42,6 +42,45 @@
                 #{videoTag.createTime}
             </foreach>
     </insert>
+    <insert id="addVideoLike">
+        insert into
+            t_video_like(
+                 userId,
+                 videoId,
+                 createTime
+            )
+        values (
+            #{videoLike.userId},
+            #{videoLike.videoId},
+            #{videoLike.createTime}
+            )
+    </insert>
+    <insert id="addVideoCollection">
+        insert into
+            t_video_collection(
+                   videoId,
+                   userId,
+                   groupId,
+                   createTime
+            )values (
+             #{videoCollection.videoId},
+             #{videoCollection.userId},
+             #{videoCollection.groupId},
+             #{videoCollection.createTime}
+                )
+    </insert>
+    <delete id="deleteVideoLike">
+        delete from
+            t_video_like
+        where
+            userId = #{userId} and videoId = #{videoId}
+    </delete>
+    <delete id="deleteVideoCollection">
+        delete from
+            t_video_collection
+        where
+            videoId = #{videoId} and userId = #{userId}
+    </delete>
     <select id="pageCountVideos" resultType="java.lang.Integer">
         select
             count(1)
@@ -68,5 +107,45 @@
             id
         desc
         limit #{params.start}, #{params.limit}
+    </select>
+    <select id="getVideoById" resultType="com.xu.viewpoint.dao.domain.Video">
+        select
+            *
+        from
+            t_video
+        where
+            id = #{videoId}
+    </select>
+    <select id="getVideoLikeByVideoIdAndUserId" resultType="com.xu.viewpoint.dao.domain.VideoLike">
+        select
+            *
+        from
+            t_video_like
+        where
+            userId = #{userId} and videoId = #{videoId}
+    </select>
+    <select id="getVideoLikes" resultType="java.lang.Long">
+        select
+            count(1)
+        from
+            t_video_like
+        where
+            videoId = #{videoId}
+    </select>
+    <select id="getVideoCollections" resultType="java.lang.Long">
+        select
+            count(1)
+        from
+            t_video_collection
+        where
+            videoId = #{videoId}
+    </select>
+    <select id="getVideoCollectionByVideoIdAndUserId" resultType="com.xu.viewpoint.dao.domain.VideoCollection">
+        select
+            *
+        from
+            t_video_collection
+        where
+            videoId = #{videoId} and userId = #{userId}
     </select>
 </mapper>

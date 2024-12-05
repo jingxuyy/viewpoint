@@ -27,6 +27,8 @@ fdfs:
     height: 150
     width: 150
   tracker-list: 192.168.59.100:2024
+  http:
+    storage-addr: http://192.168.59.100:8888/group1/
 
 
 
