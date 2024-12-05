@@ -1,10 +1,7 @@
 package com.xu.viewpoint.api;
 
 import com.xu.viewpoint.api.support.UserSupport;
-import com.xu.viewpoint.dao.domain.JsonResponse;
-import com.xu.viewpoint.dao.domain.PageResult;
-import com.xu.viewpoint.dao.domain.Video;
-import com.xu.viewpoint.dao.domain.VideoCollection;
+import com.xu.viewpoint.dao.domain.*;
 import com.xu.viewpoint.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -144,6 +141,48 @@ public class VideoApi {
         }
         // 无论用户是否登录，都可以查看视频收藏总数
         Map<String, Object> result = videoService.getVideoCollections(userId, videoId);
+        return JsonResponse.success(result);
+    }
+
+    /**
+     * 更新收藏的视频
+     * @param videoCollection
+     */
+    @PutMapping("/video-collections")
+    public JsonResponse<String> updateVideoCollection(@RequestBody VideoCollection videoCollection){
+        Long userId = userSupport.getCurrentUserId();
+        videoService.updateVideoCollection(videoCollection, userId);
+        return JsonResponse.success();
+    }
+
+
+
+
+    /**
+     * 视频投币
+     * @param videoCoin
+     */
+    @PostMapping("/video-coins")
+    public JsonResponse<String> addVideoCoins(@RequestBody VideoCoin videoCoin){
+        Long userId = userSupport.getCurrentUserId();
+        videoService.addVideoCoins(videoCoin, userId);
+        return JsonResponse.success();
+    }
+
+    /**
+     * 查看视频投币总数
+     * @param videoId
+     */
+    @GetMapping("/video-coins")
+    public JsonResponse<Map<String, Object>> getVideoCoins(@RequestParam Long videoId){
+        Long userId = null;
+        try {
+            userId = userSupport.getCurrentUserId();
+        }catch (Exception ignored){
+
+        }
+        // 无论用户是否登录，都可以查看视频投币总数
+        Map<String, Object> result = videoService.getVideoCoins(videoId, userId);
         return JsonResponse.success(result);
     }
 

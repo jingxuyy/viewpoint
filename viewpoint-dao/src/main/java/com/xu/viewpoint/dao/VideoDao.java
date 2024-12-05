@@ -1,9 +1,6 @@
 package com.xu.viewpoint.dao;
 
-import com.xu.viewpoint.dao.domain.Video;
-import com.xu.viewpoint.dao.domain.VideoCollection;
-import com.xu.viewpoint.dao.domain.VideoLike;
-import com.xu.viewpoint.dao.domain.VideoTag;
+import com.xu.viewpoint.dao.domain.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -96,4 +93,35 @@ public interface VideoDao {
      * @param userId
      */
     VideoCollection getVideoCollectionByVideoIdAndUserId(@Param("videoId") Long videoId, @Param("userId") Long userId);
+
+    /**
+     * 更新 VideoCollection
+     * @param videoCollection
+     */
+    Integer updateVideoCollection(@Param("videoCollection") VideoCollection videoCollection);
+
+    /**
+     * 视频投币，向VideoCoin添加数据
+     * @param videoCoin
+     */
+    Integer addVideoCoins(@Param("videoCoin") VideoCoin videoCoin);
+
+    /**
+     * 视频投币修改，仅支持再次投币
+     * @param videoCoin
+     */
+    Integer updateVideoCoins(@Param("videoCoin") VideoCoin videoCoin);
+
+    /**
+     * 根据userId和videoId查询记录
+     * @param userId
+     * @param videoId
+     */
+    VideoCoin getVideoCoinsByUserIdAndVideoId(@Param("userId") Long userId, @Param("videoId") Long videoId);
+
+    /**
+     * 根据videoId查询当前视频投币总数
+     * @param videoId
+     */
+    Long getVideoCoinsAmounts(@Param("videoId") Long videoId);
 }

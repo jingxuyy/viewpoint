@@ -3,6 +3,7 @@ package com.xu.viewpoint.service.impl;
 import com.xu.viewpoint.dao.VideoDao;
 import com.xu.viewpoint.dao.domain.*;
 import com.xu.viewpoint.dao.domain.exception.ConditionException;
+import com.xu.viewpoint.service.UserCoinService;
 import com.xu.viewpoint.service.VideoService;
 import com.xu.viewpoint.service.util.FastDFSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class VideoServiceImpl implements VideoService {
 
     @Autowired
     private FastDFSUtil fastDFSUtil;
+
+    @Autowired
+    private UserCoinService userCoinService;
 
 
     /**
@@ -231,5 +235,109 @@ public class VideoServiceImpl implements VideoService {
         result.put("count", count);
         result.put("collect", collect);
         return result;
+    }
+
+    /**
+     * 更新收藏的视频，主要是更新收藏视频的分组
+     *
+     * @param videoCollection
+     * @param userId
+     */
+    @Override
+    public void updateVideoCollection(VideoCollection videoCollection, Long userId) {
+        Long videoId = videoCollection.getVideoId();
+        Long groupId = videoCollection.getGroupId();
+        if(videoId == null || groupId == null){
+            throw new ConditionException("参数错误！");
+        }
+
+        Video video = videoDao.getVideoById(videoId);
+        if(video == null){
+            throw new ConditionException("视频已删除！");
+        }
+        // TODO 是否检查分组id是否合法
+        videoCollection.setUserId(userId);
+        videoDao.updateVideoCollection(videoCollection);
+    }
+
+
+    /**
+     * 视频投币
+     *
+     * @param videoCoin
+     * @param userId
+     */
+    @Transactional
+    @Override
+    public void addVideoCoins(VideoCoin videoCoin, Long userId) {
+        Long videoId = videoCoin.getVideoId();
+        Integer amount = videoCoin.getAmount();
+        if(videoId == null || amount<=0){
+            throw new ConditionException("参数错误！");
+        }
+
+        Video video = videoDao.getVideoById(videoId);
+        if(video == null){
+            throw new ConditionException("视频已删除！");
+        }
+
+        // 查询当前用户硬币总数，从而判断是否有足够硬币
+        Integer userCoinsAmount = userCoinService.getUserCoinsAmount(userId);
+        userCoinsAmount = userCoinsAmount == null ? 0 : userCoinsAmount;
+        if(amount > userCoinsAmount){
+            throw new ConditionException("硬币数量不够！");
+        }
+
+        Date date = new Date();
+        videoCoin.setUserId(userId);
+        // 查询是否之前投币过，若是，则变成修改
+        VideoCoin dbVideoCoin = videoDao.getVideoCoinsByUserIdAndVideoId(userId, videoId);
+
+        if(dbVideoCoin!=null){
+            // 之前投币过，更新
+            videoCoin.setUpdateTime(date);
+            this.updateVideoCoins(videoCoin);
+        }else {
+            // 之前未投币，新增
+            videoCoin.setCreateTime(date);
+            videoDao.addVideoCoins(videoCoin);
+        }
+        // 修改用户硬币总数
+        userCoinService.updateUserCoinsAmount(userId, amount);
+    }
+
+    /**
+     * 根据视频id查看投币总数
+     *
+     * @param videoId
+     * @param userId
+     */
+    @Override
+    public Map<String, Object> getVideoCoins(Long videoId, Long userId) {
+
+        // 查看此视频投币总数
+        Long count = videoDao.getVideoCoinsAmounts(videoId);
+
+        // 如果当前登录，则查看自己是否有投币过
+        VideoCoin videoCoin = videoDao.getVideoCoinsByUserIdAndVideoId(userId, videoId);
+
+        boolean coin = videoCoin != null;
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("count", count);
+        result.put("coin", coin);
+
+        return result;
+    }
+
+
+    //--------------------------------private--------------
+
+    /**
+     * 修改视频投币数, 仅支持用户再投币
+     * @param videoCoin
+     */
+    private void updateVideoCoins(VideoCoin videoCoin){
+        videoDao.updateVideoCoins(videoCoin);
     }
 }

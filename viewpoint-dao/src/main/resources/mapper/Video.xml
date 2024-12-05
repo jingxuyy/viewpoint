@@ -69,6 +69,42 @@
              #{videoCollection.createTime}
                 )
     </insert>
+    <insert id="addVideoCoins">
+        insert into
+            t_video_coin(
+                 userId,
+                 videoId,
+                 amount,
+                 createTime
+                )
+        values (
+             #{videoCoin.userId},
+             #{videoCoin.videoId},
+             #{videoCoin.amount},
+             #{videoCoin.createTime}
+            )
+    </insert>
+    <update id="updateVideoCollection">
+        update
+            t_video_collection
+        set
+            groupId = #{videoCollection.groupId}
+        where
+            videoId = #{videoCollection.videoId}
+        and
+            userId = #{videoCollection.userId}
+    </update>
+    <update id="updateVideoCoins">
+        update
+            t_video_coin
+        set
+            amount = amount + #{videoCoin.amount},
+            updateTime = #{videoCoin.updateTime}
+        where
+            userId = #{videoCoin.userId}
+        and
+            videoId = #{videoCoin.videoId}
+    </update>
     <delete id="deleteVideoLike">
         delete from
             t_video_like
@@ -147,5 +183,23 @@
             t_video_collection
         where
             videoId = #{videoId} and userId = #{userId}
+    </select>
+    <select id="getVideoCoinsByUserIdAndVideoId" resultType="com.xu.viewpoint.dao.domain.VideoCoin">
+        select
+            *
+        from
+            t_video_coin
+        where
+            userId = #{userId}
+        and
+            videoId = #{videoId}
+    </select>
+    <select id="getVideoCoinsAmounts" resultType="java.lang.Long">
+        select
+            sum(amount)
+        from
+            t_video_coin
+        where
+            videoId = #{videoId}
     </select>
 </mapper>
