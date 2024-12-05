@@ -3,6 +3,8 @@ package com.xu.viewpoint.api;
 import com.xu.viewpoint.dao.domain.JsonResponse;
 import com.xu.viewpoint.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,5 +36,15 @@ public class FileApi {
                                                    Integer totalSliceNo) throws IOException {
         String filePath = fileService.uploadFileBySlices(file, fileMd5, sliceNo, totalSliceNo);
         return JsonResponse.success(filePath);
+    }
+
+    /**
+     * 获取文件的md5
+     * @param file
+     */
+    @PostMapping("/md5files")
+    public JsonResponse<String> getFileMD5(MultipartFile file) throws Exception {
+        String fileMD5 = fileService.getFileMD5(file);
+        return JsonResponse.success(fileMD5);
     }
 }

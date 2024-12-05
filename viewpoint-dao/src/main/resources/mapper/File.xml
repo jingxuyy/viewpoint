@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.viewpoint.dao.FileDao">
+
+    <insert id="addFile">
+        insert into
+            t_file(
+           url,
+           `type`,
+           md5,
+           createTime
+            )
+        values (
+        #{file.url},
+        #{file.type},
+        #{file.md5},
+        #{file.createTime}
+               )
+    </insert>
+    <select id="getFileByMD" resultType="com.xu.viewpoint.dao.domain.File">
+        select
+            *
+        from
+            t_file
+        where
+            md5 = #{md5}
+    </select>
+</mapper>

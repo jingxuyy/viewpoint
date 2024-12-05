@@ -1,7 +1,11 @@
 package com.xu.viewpoint.service.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -34,5 +38,17 @@ public class MD5Util {
 		} else {
 			return content.getBytes();
 		}
+	}
+
+	public static String getFileMD5(MultipartFile file) throws Exception {
+		InputStream fis = file.getInputStream();
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int byteRead;
+		while ((byteRead = fis.read(buffer))>0){
+			bos.write(buffer, 0, byteRead);
+		}
+		fis.close();
+		return DigestUtils.md5Hex(bos.toByteArray());
 	}
 }

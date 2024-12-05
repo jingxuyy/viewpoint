@@ -14,4 +14,10 @@ public interface FileService {
      * @param totalSliceNo
      */
     String uploadFileBySlices(MultipartFile file, String fileMd5, Integer sliceNo, Integer totalSliceNo) throws IOException;
+
+    /**
+     * 获取文件的md5
+     * @param file
+     */
+    String getFileMD5(MultipartFile file) throws Exception;
 }
