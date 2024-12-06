@@ -3,14 +3,20 @@ package com.xu.viewpoint.service.websocket;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.cj.util.StringUtils;
 import com.xu.viewpoint.dao.domain.Danmu;
+import com.xu.viewpoint.dao.domain.constant.UserMomentsConstant;
 import com.xu.viewpoint.service.DanmuService;
+import com.xu.viewpoint.service.util.RocketMQUtil;
 import com.xu.viewpoint.service.util.TokenUtil;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -35,7 +41,7 @@ public class WebSocketService {
     private static final AtomicInteger ONLINE_COUNT = new AtomicInteger(0);
 
     // 存放不同客户端的webSocket连接
-    private static final ConcurrentHashMap<String, WebSocketService> WEBSOCKET_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, WebSocketService> WEBSOCKET_MAP = new ConcurrentHashMap<>();
 
     // 用于通信
     private Session session;
@@ -60,6 +66,22 @@ public class WebSocketService {
     @Autowired
     public void setDanmuService(DanmuService danmuService) {
         WebSocketService.danmuService = danmuService;
+    }
+
+
+    private static DefaultMQProducer danmusProducer;
+
+    @Resource(name = "danmusProducer")
+    public void setDanmusProducer(DefaultMQProducer danmusProducer) {
+        WebSocketService.danmusProducer = danmusProducer;
+    }
+
+
+    private static DefaultMQProducer danmusSaveProducer;
+
+    @Resource(name = "danmusSaveProducer")
+    public void setDanmusSaveProducer(DefaultMQProducer danmusSaveProducer) {
+        WebSocketService.danmusSaveProducer = danmusSaveProducer;
     }
 
     /**
@@ -127,10 +149,19 @@ public class WebSocketService {
                 for (Map.Entry<String, WebSocketService> entry : WEBSOCKET_MAP.entrySet()) {
                     // 2.1 遍历WEBSOCKET_MAP获取连接对象
                     WebSocketService webSocketService = entry.getValue();
+
+                    // **** 高并发优化 ****
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("message", message);
+                    jsonObject.put("sessionId", webSocketService.getSessionId());
+                    Message msg = new Message(UserMomentsConstant.TOPIC_MOMENTS, jsonObject.toString().getBytes());
+                    RocketMQUtil.asyncSendMsg(danmusProducer, msg);
+                    // ********
+
                     // 2.2 若连接是打开状态，则发送消息
-                    if (webSocketService.session.isOpen()) {
-                        webSocketService.sendMessage(message);
-                    }
+//                    if (webSocketService.session.isOpen()) {
+//                        webSocketService.sendMessage(message);
+//                    }
                 }
 
                 if (this.userId != null){
@@ -138,7 +169,16 @@ public class WebSocketService {
                     Danmu danmu = JSONObject.parseObject(message, Danmu.class);
                     danmu.setUserId(userId);
                     danmu.setCreateTime(new Date());
-                    danmuService.addDanmu(danmu);
+
+                    // **** 高并发优化 ****
+                    danmuService.asyncAddDanmu(danmu);
+                    Message saveMsg = new Message(UserMomentsConstant.TOPIC_MOMENTS, JSONObject.toJSONBytes(danmu));
+                    RocketMQUtil.asyncSendMsg(danmusSaveProducer, saveMsg);
+                    // ********
+
+
+
+                    // danmuService.addDanmu(danmu);
 
                     // 4. 保存弹幕到redis
                     danmuService.addDanmuToRedis(danmu);
@@ -170,4 +210,29 @@ public class WebSocketService {
         this.session.getBasicRemote().sendText(message);
     }
 
+    /**
+     * 定时任务，每过5s钟，给每个连接发送在线人数
+     * @throws IOException
+     */
+    @Scheduled(fixedRate = 5000)
+    private void noticeOnlineCount() throws IOException {
+        for (Map.Entry<String, WebSocketService> entry : WEBSOCKET_MAP.entrySet()) {
+            WebSocketService webSocketService = entry.getValue();
+            if(webSocketService.session.isOpen()){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("onlineCount", ONLINE_COUNT.get());
+                jsonObject.put("msg", "当前在线人数为" + ONLINE_COUNT.get());
+                webSocketService.sendMessage(jsonObject.toJSONString());
+            }
+        }
+    }
+
+
+    public Session getSession() {
+        return session;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
 }

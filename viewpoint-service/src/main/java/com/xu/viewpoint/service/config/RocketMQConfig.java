@@ -3,10 +3,13 @@ package com.xu.viewpoint.service.config;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.cj.util.StringUtils;
+import com.xu.viewpoint.dao.domain.Danmu;
 import com.xu.viewpoint.dao.domain.UserFollowing;
 import com.xu.viewpoint.dao.domain.UserMoment;
 import com.xu.viewpoint.dao.domain.constant.UserMomentsConstant;
+import com.xu.viewpoint.service.DanmuService;
 import com.xu.viewpoint.service.UserFollowingService;
+import com.xu.viewpoint.service.websocket.WebSocketService;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -39,8 +42,11 @@ public class RocketMQConfig {
     @Autowired
     private UserFollowingService userFollowingService;
 
+    @Autowired
+    private DanmuService danmuService;
+
     /**
-     * 生产者
+     * 用户动态生产者
      */
     @Bean("momentsProducer")
     public DefaultMQProducer momentsProducer() throws MQClientException {
@@ -52,7 +58,7 @@ public class RocketMQConfig {
 
 
     /**
-     * 消费者
+     * 用户动态消费者
      */
     @Bean("momentsConsumer")
     public DefaultMQPushConsumer momentsConsumer() throws MQClientException {
@@ -96,6 +102,102 @@ public class RocketMQConfig {
                     subscribedList.add(userMoment);
                     redisTemplate.opsForValue().set(key, JSONObject.toJSONString(subscribedList));
                 }
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            }
+        });
+        consumer.start();
+        return consumer;
+    }
+
+
+
+
+    /**
+     * 用户弹幕生产者
+     */
+    @Bean("danmusProducer")
+    public DefaultMQProducer danmusProducer() throws MQClientException {
+        DefaultMQProducer producer = new DefaultMQProducer(UserMomentsConstant.GROUP_MOMENTS);
+        producer.setNamesrvAddr(nameServerAddr);
+        producer.start();
+        return producer;
+    }
+
+
+    /**
+     * 用户弹幕消费者
+     */
+    @Bean("danmusConsumer")
+    public DefaultMQPushConsumer danmusConsumer() throws MQClientException {
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(UserMomentsConstant.GROUP_MOMENTS);
+        consumer.setNamesrvAddr(nameServerAddr);
+        consumer.subscribe(UserMomentsConstant.TOPIC_MOMENTS, "*");
+        consumer.registerMessageListener(new MessageListenerConcurrently() {
+            @Override
+            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
+
+                // 1. 获取消息
+                MessageExt msg = list.get(0);
+
+                // 2. 将消息转换成JSONObject对象
+                String msgStr = new String(msg.getBody());
+                JSONObject jsonObject = JSONObject.parseObject(msgStr);
+                // 3. 获取sessionId和弹幕信息
+                String sessionId = jsonObject.getString("sessionId");
+                String message = jsonObject.getString("message");
+                // 4. 根据sessionId获取当前发送弹幕的连接
+                WebSocketService webSocketService = WebSocketService.WEBSOCKET_MAP.get(sessionId);
+
+                // 5. 开始消费，发送消息到客户端
+                if(webSocketService.getSession().isOpen()){
+                    try {
+                        webSocketService.sendMessage(message);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            }
+        });
+        consumer.start();
+        return consumer;
+    }
+
+
+
+
+    /**
+     * 用户弹幕生产者
+     */
+    @Bean("danmusSaveProducer")
+    public DefaultMQProducer danmusSaveProducer() throws MQClientException {
+        DefaultMQProducer producer = new DefaultMQProducer(UserMomentsConstant.GROUP_MOMENTS);
+        producer.setNamesrvAddr(nameServerAddr);
+        producer.start();
+        return producer;
+    }
+
+
+    /**
+     * 用户弹幕消费者
+     */
+    @Bean("danmusSaveConsumer")
+    public DefaultMQPushConsumer danmusSaveConsumer() throws MQClientException {
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(UserMomentsConstant.GROUP_MOMENTS);
+        consumer.setNamesrvAddr(nameServerAddr);
+        consumer.subscribe(UserMomentsConstant.TOPIC_MOMENTS, "*");
+        consumer.registerMessageListener(new MessageListenerConcurrently() {
+            @Override
+            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
+
+                // 1. 获取消息
+                MessageExt msg = list.get(0);
+
+                // 2. 将消息转换成Danmu对象
+                String msgStr = new String(msg.getBody());
+                Danmu danmu = JSONObject.parseObject(msgStr, Danmu.class);
+                danmuService.asyncAddDanmu(danmu);
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });
