@@ -124,4 +124,35 @@ public interface VideoDao {
      * @param videoId
      */
     Long getVideoCoinsAmounts(@Param("videoId") Long videoId);
+
+
+    /**
+     * 向VideoComment表中添加数据
+     * @param videoComment
+     */
+    Integer addVideoComment(@Param("videoComment") VideoComment videoComment);
+
+    /**
+     * 根据videoId查询一级的评论数
+     * @param params
+     */
+    Integer pageCountVideoComments(@Param("params") Map<String, Object> params);
+
+    /**
+     * 根据videoId分页查询所有的一级评论
+     * @param params
+     */
+    List<VideoComment> pageListVideoComments(@Param("params") Map<String, Object> params);
+
+    /**
+     * 根据一级评论id批量查询二级评论数据
+     * @param parentIdList
+     */
+    List<VideoComment> batchGetVideoCommentsByRootIds(@Param("rootIds") List<Long> rootIds);
+
+    /**
+     * 根据id查询信息
+     * @param videoId
+     */
+    Video getVideoDetails(@Param("videoId") Long videoId);
 }

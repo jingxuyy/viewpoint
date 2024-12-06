@@ -4,6 +4,7 @@ import com.xu.viewpoint.dao.VideoDao;
 import com.xu.viewpoint.dao.domain.*;
 import com.xu.viewpoint.dao.domain.exception.ConditionException;
 import com.xu.viewpoint.service.UserCoinService;
+import com.xu.viewpoint.service.UserService;
 import com.xu.viewpoint.service.VideoService;
 import com.xu.viewpoint.service.util.FastDFSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: xuJing
@@ -30,6 +32,10 @@ public class VideoServiceImpl implements VideoService {
 
     @Autowired
     private UserCoinService userCoinService;
+
+
+    @Autowired
+    private UserService userService;
 
 
     /**
@@ -327,6 +333,124 @@ public class VideoServiceImpl implements VideoService {
         result.put("count", count);
         result.put("coin", coin);
 
+        return result;
+    }
+
+    /**
+     * 添加视频评论
+     *
+     * @param videoComment
+     * @param userId
+     */
+    @Override
+    public void addVideoComment(VideoComment videoComment, Long userId) {
+        Long videoId = videoComment.getVideoId();
+        if(videoId == null){
+            throw new ConditionException("参数错误！");
+        }
+        Video video = videoDao.getVideoById(videoId);
+        if(video == null){
+            throw new ConditionException("视频已删除！");
+        }
+
+        videoComment.setUserId(userId);
+        videoComment.setCreateTime(new Date());
+        videoDao.addVideoComment(videoComment);
+    }
+
+    /**
+     * 分页查询视频评论
+     *
+     * @param size
+     * @param no
+     * @param videoId
+     */
+    @Override
+    public PageResult<VideoComment> pageListVideoComments(Integer size, Integer no, Long videoId) {
+
+        Video video = videoDao.getVideoById(videoId);
+        if(video == null){
+            throw new ConditionException("视频已删除！");
+        }
+        // 1. 构建查询条件
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", (no-1)*size);
+        params.put("limit", size);
+        params.put("videoId", videoId);
+
+        // 2. 查询一级评论总数（rootId=null）
+        Integer count = videoDao.pageCountVideoComments(params);
+
+        // 3. 当前评论设计得是一个二级评论，构建评论集合存储
+        List<VideoComment> list = new ArrayList<>();
+        if(count > 0){
+            // 4. 查询当前视频的一级评论
+            list = videoDao.pageListVideoComments(params);
+            if(!list.isEmpty()) {
+                // 5. 批量查询二级评论
+                // 5.1 获取所有一级评论的id
+                List<Long> parentIdList = list.stream()
+                        .map(VideoComment::getId)
+                        .collect(Collectors.toList());
+                // 5.2 根据一级评论id列表批量查询二级评论
+                List<VideoComment> childCommentList = videoDao.batchGetVideoCommentsByRootIds(parentIdList);
+
+                // 5.3 批量查询用户信息，（需要展示每条评论的用户信息）
+                // 5.3.1 获取一级评论用户id集合
+                Set<Long> userIdList = list.stream()
+                        .map(VideoComment::getUserId)
+                        .collect(Collectors.toSet());
+                // 5.3.2 获取二级评论用户id集合
+                Set<Long> replyUserIdList = childCommentList.stream()
+                        .map(VideoComment::getReplyUserId)
+                        .collect(Collectors.toSet());
+                userIdList.addAll(replyUserIdList);
+                // 5.3.3 根据用户id查询所有用户详情信息
+                List<UserInfo> userInfoList = userService.getUserInfoByUserIds(userIdList);
+                Map<Long, UserInfo> userInfoMap = userInfoList.stream()
+                        .collect(Collectors.toMap(UserInfo::getUserId, userInfo -> userInfo));
+
+                // 6. 构建以一级评论为主的评论列表返回
+                list.forEach(comment -> {
+                    // 6.1 获取当前一级评论id
+                    Long id = comment.getId();
+                    // 6.2 创建其子评论列表
+                    List<VideoComment> childList = new ArrayList<>();
+                    // 6.3 遍历所有的二级评论列表，若其rootId为当前一级评论id则加入其子评论列表
+                    childCommentList.forEach(childComment -> {
+                        // 6.3.1 比较id和rootId
+                        if (childComment.getRootId().equals(id)) {
+                            // 6.3.2 相同，则为当前一级评论的子评论，赋值用户信息和评论者信息
+                            childComment.setUserInfo(userInfoMap.get(childComment.getUserId()));
+                            childComment.setReplyUserInfo(userInfoMap.get(childComment.getReplyUserInfo()));
+                            // 6.3.3 将子评论加入子评论列表
+                            childList.add(childComment);
+                        }
+                    });
+                    // 6.4 将子评论列表加入评论中，并设置当前评论者信息
+                    comment.setChildList(childList);
+                    comment.setUserInfo(userInfoMap.get(comment.getUserId()));
+                });
+            }
+        }
+
+        return new PageResult<>(count,list);
+    }
+
+    /**
+     * 获取视频详情
+     *
+     * @param videoId
+     */
+    @Override
+    public Map<String, Object> getVideoDetails(Long videoId) {
+        Video video = videoDao.getVideoDetails(videoId);
+        Long userId = video.getUserId();
+        User user = userService.getCurrentUser(userId);
+        UserInfo userInfo = user.getUserInfo();
+        Map<String, Object> result = new HashMap<>();
+        result.put("video", video);
+        result.put("userInfo", userInfo);
         return result;
     }
 

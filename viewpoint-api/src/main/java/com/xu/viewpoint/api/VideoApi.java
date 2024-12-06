@@ -186,4 +186,42 @@ public class VideoApi {
         return JsonResponse.success(result);
     }
 
+
+    /**
+     * 视频添加评论
+     * @param videoComment
+     */
+    @PostMapping("/video-comments")
+    public JsonResponse<String> addVideoComment(@RequestBody VideoComment videoComment){
+        Long userId = userSupport.getCurrentUserId();
+        videoService.addVideoComment(videoComment, userId);
+        return JsonResponse.success();
+    }
+
+
+    /**
+     * 分页查询视频评论
+     * @param size
+     * @param no
+     * @param videoId
+     */
+    @GetMapping("/video-comments")
+    public JsonResponse<PageResult<VideoComment>> pageListVideoComments(@RequestParam Integer size,
+                                                                        @RequestParam Integer no,
+                                                                        @RequestParam Long videoId){
+        PageResult<VideoComment> result = videoService.pageListVideoComments(size, no, videoId);
+        return JsonResponse.success(result);
+    }
+
+
+    /**
+     * 获取视频详情
+     * @param videoId
+     */
+    @GetMapping("/video-details")
+    public JsonResponse<Map<String, Object>> getVideoDetails(@RequestParam Long videoId){
+        Map<String, Object> result = videoService.getVideoDetails(videoId);
+        return JsonResponse.success(result);
+    }
+
 }

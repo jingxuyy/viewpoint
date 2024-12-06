@@ -84,6 +84,24 @@
              #{videoCoin.createTime}
             )
     </insert>
+    <insert id="addVideoComment">
+        insert into
+            t_video_comment(
+                    videoId,
+                    userId,
+                    comment,
+                    replyUserId,
+                    rootId,
+                    createTime
+                )values (
+                 #{videoComment.videoId},
+                 #{videoComment.userId},
+                 #{videoComment.comment},
+                 #{videoComment.replyUserId},
+                 #{videoComment.rootId},
+                 #{videoComment.createTime}
+                )
+    </insert>
     <update id="updateVideoCollection">
         update
             t_video_collection
@@ -201,5 +219,48 @@
             t_video_coin
         where
             videoId = #{videoId}
+    </select>
+    <select id="pageCountVideoComments" resultType="java.lang.Integer">
+        select
+            count(1)
+        from
+            t_video_comment
+        where
+            videoId = #{params.videoId}
+        and
+            rootId is null
+    </select>
+    <select id="pageListVideoComments" resultType="com.xu.viewpoint.dao.domain.VideoComment">
+        select
+            *
+        from
+            t_video_comment
+        where
+            videoId = #{params.videoId}
+          and
+            rootId is null
+        order by id desc
+        limit #{params.start}, #{params.limit}
+    </select>
+    <select id="batchGetVideoCommentsByRootIds" resultType="com.xu.viewpoint.dao.domain.VideoComment">
+        select
+            *
+        from
+            t_video_comment
+        where
+            rootId
+        in
+        <foreach collection="rootIds" open="(" close=")" separator="," item="rootId">
+            #{rootId}
+        </foreach>
+        order by id
+    </select>
+    <select id="getVideoDetails" resultType="com.xu.viewpoint.dao.domain.Video">
+        select
+            *
+        from
+            t_video
+        where
+            id = #{videoId}
     </select>
 </mapper>

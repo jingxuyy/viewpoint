@@ -1,9 +1,6 @@
 package com.xu.viewpoint.service;
 
-import com.xu.viewpoint.dao.domain.PageResult;
-import com.xu.viewpoint.dao.domain.Video;
-import com.xu.viewpoint.dao.domain.VideoCoin;
-import com.xu.viewpoint.dao.domain.VideoCollection;
+import com.xu.viewpoint.dao.domain.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -97,4 +94,27 @@ public interface VideoService {
      * @param userId
      */
     Map<String, Object> getVideoCoins(Long videoId, Long userId);
+
+
+    /**
+     * 添加视频评论
+     * @param videoComment
+     * @param userId
+     */
+    void addVideoComment(VideoComment videoComment, Long userId);
+
+
+    /**
+     * 分页查询视频评论
+     * @param size
+     * @param no
+     * @param videoId
+     */
+    PageResult<VideoComment> pageListVideoComments(Integer size, Integer no, Long videoId);
+
+    /**
+     * 获取视频详情
+     * @param videoId
+     */
+    Map<String, Object> getVideoDetails(Long videoId);
 }
