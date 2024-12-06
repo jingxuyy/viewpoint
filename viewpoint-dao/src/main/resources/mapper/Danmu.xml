@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.viewpoint.dao.DanmuDao">
+
+    <insert id="addDanmu">
+        insert into
+            t_danmu(
+                userId,
+                videoId,
+                content,
+                danmuTime,
+                createTime
+            )
+        values (
+            #{danmu.userId},
+            #{danmu.videoId},
+            #{danmu.content},
+            #{danmu.danmuTime},
+            #{danmu.createTime}
+        )
+    </insert>
+    <select id="getDanmus" resultType="com.xu.viewpoint.dao.domain.Danmu">
+        select
+            *
+        from
+            t_danmu
+        <where>
+            <if test="params.videoId != null and params.videoId !=''">
+                videoId = #{params.videoId}
+            </if>
+        <if test="params.startDate != null and params.startDate != '' ">
+            and createTime <![CDATA[>=]]> #{params.startDate}
+        </if>
+        <if test="params.endDate != null and params.endDate != ''">
+            and createTime <![CDATA[<=]]> #{params.endDate}
+        </if>
+        </where>
+    </select>
+</mapper>
