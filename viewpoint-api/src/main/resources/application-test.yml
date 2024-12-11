@@ -12,6 +12,8 @@ spring:
     multipart:
       max-file-size: 3GB
       max-request-size: 3GB
+  elasticsearch:
+    uris: 192.168.59.100:9200
 
 
 rocketmq:
@@ -29,6 +31,10 @@ fdfs:
   tracker-list: 192.168.59.100:2024
   http:
     storage-addr: http://192.168.59.100:8888/group1/
+
+#elasticsearch:
+#  url: 192.168.59.100:9200
+
 
 
 

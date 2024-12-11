@@ -2,6 +2,7 @@ package com.xu.viewpoint.api;
 
 import com.xu.viewpoint.api.support.UserSupport;
 import com.xu.viewpoint.dao.domain.*;
+import com.xu.viewpoint.service.ElasticSearchService;
 import com.xu.viewpoint.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,9 @@ public class VideoApi {
     @Autowired
     private UserSupport userSupport;
 
+    @Autowired
+    private ElasticSearchService elasticSearchService;
+
     /**
      * 视频投稿，添加视频
      * @param video
@@ -32,6 +36,8 @@ public class VideoApi {
         Long userId = userSupport.getCurrentUserId();
         video.setUserId(userId);
         videoService.addVideos(video);
+        // 添加到es中
+        elasticSearchService.addVideo(video);
         return JsonResponse.success();
     }
 
