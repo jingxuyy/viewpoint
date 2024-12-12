@@ -117,4 +117,17 @@ public interface VideoService {
      * @param videoId
      */
     Map<String, Object> getVideoDetails(Long videoId);
+
+    /**
+     * 添加视频观看记录
+     * @param videoView
+     * @param request
+     */
+    void addVideoView(VideoView videoView, HttpServletRequest request);
+
+    /**
+     * 查询视频播放量
+     * @param videoId
+     */
+    Integer getVideoViewCounts(Long videoId);
 }

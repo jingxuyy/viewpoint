@@ -155,4 +155,22 @@ public interface VideoDao {
      * @param videoId
      */
     Video getVideoDetails(@Param("videoId") Long videoId);
+
+    /**
+     * 添加观看记录
+     * @param videoView
+     */
+    Integer addVideoView(@Param("videoView") VideoView videoView);
+
+    /**
+     * 查询当天观看记录
+     * @param params
+     */
+    VideoView getVideoView(@Param("params") Map<String, Object> params);
+
+    /**
+     * 查询视频播放量
+     * @param videoId
+     */
+    Integer getVideoViewCounts(@Param("videoId") Long videoId);
 }

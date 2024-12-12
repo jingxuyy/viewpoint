@@ -102,6 +102,22 @@
                  #{videoComment.createTime}
                 )
     </insert>
+    <insert id="addVideoView">
+        insert into
+            t_video_view(
+                     videoId,
+                     userId,
+                     clientId,
+                     ip,
+                     createTime
+                )values (
+                 #{videoView.videoId},
+                 #{videoView.userId},
+                 #{videoView.clientId},
+                 #{videoView.ip},
+                 #{videoView.createTime}
+            )
+    </insert>
     <update id="updateVideoCollection">
         update
             t_video_collection
@@ -262,5 +278,33 @@
             t_video
         where
             id = #{videoId}
+    </select>
+    <select id="getVideoView" resultType="com.xu.viewpoint.dao.domain.VideoView">
+        select
+            *
+        from
+            t_video_view
+        where
+            videoId = #{params.videoId}
+        <if test="params.userId == null and params.clientId != null">
+            and clientId = #{params.clientId} and userId is null
+        </if>
+        <if test="params.userId != null">
+            and userId = #{params.userId}
+        </if>
+        <if test="params.ip != null and params.ip !=''">
+            and ip = #{params.ip}
+        </if>
+        <if test="params.today != null and params.today != ''">
+            and DATE_FOEMAT(createTime, '%Y-%m-%d') = #{params.today}
+        </if>
+    </select>
+    <select id="getVideoViewCounts" resultType="java.lang.Integer">
+        select
+            count(1)
+        from
+            t_video_view
+        where
+            videoId = #{videoId}
     </select>
 </mapper>

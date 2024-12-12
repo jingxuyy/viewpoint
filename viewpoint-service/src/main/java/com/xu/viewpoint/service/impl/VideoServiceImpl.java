@@ -7,12 +7,15 @@ import com.xu.viewpoint.service.UserCoinService;
 import com.xu.viewpoint.service.UserService;
 import com.xu.viewpoint.service.VideoService;
 import com.xu.viewpoint.service.util.FastDFSUtil;
+import com.xu.viewpoint.service.util.IpUtil;
+import eu.bitwalker.useragentutils.UserAgent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -454,6 +457,60 @@ public class VideoServiceImpl implements VideoService {
         return result;
     }
 
+    /**
+     * 添加视频观看记录
+     *
+     * @param videoView
+     * @param request
+     */
+    @Override
+    public void addVideoView(VideoView videoView, HttpServletRequest request) {
+
+        // 1. 获取用户id和视频id
+        Long userId = videoView.getUserId();
+        Long videoId = videoView.getVideoId();
+
+        // 2. 获取浏览器身份，通过User-Agent请求头
+        String agent = request.getHeader("User-Agent");
+        UserAgent userAgent = UserAgent.parseUserAgentString(agent);
+        // 3. 通过 clientId和ip确定唯一身份
+        String clientId = String.valueOf(userAgent.getId());
+        String ip = IpUtil.getIP(request);
+
+        // 4. 构建参数
+        Map<String, Object> params = new HashMap<>();
+        if(userId != null){
+            params.put("userId", userId);
+        }else {
+            params.put("ip", ip);
+            params.put("clientId", clientId);
+        }
+
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        params.put("today", sdf.format(date));
+        params.put("videoId", videoId);
+
+        // 5. 添加观看记录, 同一用户同一天在同一个浏览器上只能产生一个观看记录
+        VideoView dbVideoView = videoDao.getVideoView(params);
+        if(dbVideoView == null){
+            videoView.setIp(ip);
+            videoView.setClientId(clientId);
+            videoView.setCreateTime(date);
+            videoDao.addVideoView(videoView);
+        }
+
+    }
+
+    /**
+     * 查询视频播放量
+     *
+     * @param videoId
+     */
+    @Override
+    public Integer getVideoViewCounts(Long videoId) {
+        return videoDao.getVideoViewCounts(videoId);
+    }
 
     //--------------------------------private--------------
 
