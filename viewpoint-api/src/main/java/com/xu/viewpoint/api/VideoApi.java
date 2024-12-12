@@ -4,6 +4,7 @@ import com.xu.viewpoint.api.support.UserSupport;
 import com.xu.viewpoint.dao.domain.*;
 import com.xu.viewpoint.service.ElasticSearchService;
 import com.xu.viewpoint.service.VideoService;
+import org.apache.mahout.cf.taste.common.TasteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -263,7 +264,7 @@ public class VideoApi {
      * 视频内容推荐
      */
     @GetMapping("/recommendations")
-    public JsonResponse<List<Video>> recommend(){
+    public JsonResponse<List<Video>> recommend() throws TasteException {
         Long userId = userSupport.getCurrentUserId();
         List<Video> list = videoService.recommend(userId);
         return JsonResponse.success(list);
