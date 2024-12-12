@@ -173,4 +173,15 @@ public interface VideoDao {
      * @param videoId
      */
     Integer getVideoViewCounts(@Param("videoId") Long videoId);
+
+    /**
+     * 获取所有用户偏好视频和得分
+     */
+    List<UserPreference> getAllUserPreference();
+
+    /**
+     * 根据视频id集合批量查询视频
+     * @param itemIds
+     */
+    List<Video> batchGetVideosByIds(@Param("itemIds") List<Long> itemIds);
 }

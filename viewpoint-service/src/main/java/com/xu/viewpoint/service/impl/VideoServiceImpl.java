@@ -9,6 +9,18 @@ import com.xu.viewpoint.service.VideoService;
 import com.xu.viewpoint.service.util.FastDFSUtil;
 import com.xu.viewpoint.service.util.IpUtil;
 import eu.bitwalker.useragentutils.UserAgent;
+import org.apache.mahout.cf.taste.common.TasteException;
+import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
+import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
+import org.apache.mahout.cf.taste.impl.model.GenericItemPreferenceArray;
+import org.apache.mahout.cf.taste.impl.model.GenericPreference;
+import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
+import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
+import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
+import org.apache.mahout.cf.taste.impl.similarity.UncenteredCosineSimilarity;
+import org.apache.mahout.cf.taste.model.DataModel;
+import org.apache.mahout.cf.taste.model.PreferenceArray;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -512,6 +524,41 @@ public class VideoServiceImpl implements VideoService {
         return videoDao.getVideoViewCounts(videoId);
     }
 
+    /**
+     * 视频推荐
+     *
+     * @param userId
+     */
+    @Override
+    public List<Video> recommend(Long userId) throws TasteException {
+
+        // 1. 获取所有用户对各个视频的得分
+        List<UserPreference> list = videoDao.getAllUserPreference();
+
+        // 2. 创建数据模型
+        DataModel dataModel = this.createDataModel(list);
+
+        // 3. 获取用户相似度
+        UncenteredCosineSimilarity similarity = new UncenteredCosineSimilarity(dataModel);
+
+        // 4. 获取用户邻居
+        NearestNUserNeighborhood userNeighborhood = new NearestNUserNeighborhood(2, similarity, dataModel);
+
+        long[] ar = userNeighborhood.getUserNeighborhood(userId);
+
+        // 创建推荐器
+        GenericUserBasedRecommender recommender = new GenericUserBasedRecommender(dataModel, userNeighborhood, similarity);
+
+        // 推荐视频
+        List<RecommendedItem> recommendedItems = recommender.recommend(userId, 5);
+        List<Long> itemIds = recommendedItems.stream()
+                .map(RecommendedItem::getItemID)
+                .collect(Collectors.toList());
+
+        return videoDao.batchGetVideosByIds(itemIds);
+    }
+
+
     //--------------------------------private--------------
 
     /**
@@ -520,5 +567,28 @@ public class VideoServiceImpl implements VideoService {
      */
     private void updateVideoCoins(VideoCoin videoCoin){
         videoDao.updateVideoCoins(videoCoin);
+    }
+
+
+    /**
+     * 构建数据模型
+     * @param userPreferences
+     */
+    private DataModel createDataModel(List<UserPreference> userPreferences){
+        FastByIDMap<PreferenceArray> fastByIDMap = new FastByIDMap<>();
+        Map<Long, List<UserPreference>> map = userPreferences.stream()
+                .collect(Collectors.groupingBy(UserPreference::getUserId));
+        Collection<List<UserPreference>> list = map.values();
+
+        for (List<UserPreference> preferences : list) {
+            GenericPreference[] array = new GenericPreference[preferences.size()];
+            for (int i = 0; i < preferences.size(); i++) {
+                UserPreference userPreference = preferences.get(i);
+                GenericPreference item = new GenericPreference(userPreference.getUserId(), userPreference.getVideoId(), userPreference.getValue());
+                array[i] = item;
+            }
+            fastByIDMap.put(array[0].getUserID(), new GenericItemPreferenceArray(Arrays.asList(array)));
+        }
+        return new GenericDataModel(fastByIDMap);
     }
 }
