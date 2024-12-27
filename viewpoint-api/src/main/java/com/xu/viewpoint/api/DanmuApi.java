@@ -16,31 +16,31 @@ import java.util.List;
  * @author: xuJing
  * @date: 2024/12/6 19:45
  */
-@RestController
-public class DanmuApi {
-
-    @Autowired
-    private DanmuService danmuService;
-
-    @Autowired
-    private UserSupport userSupport;
-
-
-    @GetMapping("/danmus")
-    public JsonResponse<List<Danmu>> getDanmus(@RequestParam Long videoId,
-                                               String startTime,
-                                               String endTime) throws ParseException {
-        List<Danmu> list;
-        try {
-            // 判断当前身份有没有登录
-            userSupport.getCurrentUserId();
-            // 用户登录可以允许用户通过时间筛选弹幕
-            list = danmuService.getDanmus(videoId, startTime, endTime);
-        }catch (Exception ignored){
-
-            // 未登录，不能通过时间筛选弹幕
-            list = danmuService.getDanmus(videoId, null, null);
-        }
-        return JsonResponse.success(list);
-    }
-}
+//@RestController
+//public class DanmuApi {
+//
+//    @Autowired
+//    private DanmuService danmuService;
+//
+//    @Autowired
+//    private UserSupport userSupport;
+//
+//
+//    @GetMapping("/danmus")
+//    public JsonResponse<List<Danmu>> getDanmus(@RequestParam Long videoId,
+//                                               String startTime,
+//                                               String endTime) throws ParseException {
+//        List<Danmu> list;
+//        try {
+//            // 判断当前身份有没有登录
+//            userSupport.getCurrentUserId();
+//            // 用户登录可以允许用户通过时间筛选弹幕
+//            list = danmuService.getDanmus(videoId, startTime, endTime);
+//        }catch (Exception ignored){
+//
+//            // 未登录，不能通过时间筛选弹幕
+//            list = danmuService.getDanmus(videoId, null, null);
+//        }
+//        return JsonResponse.success(list);
+//    }
+//}

@@ -1,16 +1,13 @@
 package com.xu.viewpoint.dao.domain;
 
 
+
 import java.io.Serializable;
 
 import java.util.Date;
 
 
-/**
-* 用户表
-* @author 86136
- * @TableName t_user
-*/
+
 public class User implements Serializable {
 
     /**

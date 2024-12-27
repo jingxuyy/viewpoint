@@ -1,7 +1,7 @@
 package com.xu.viewpoint.service;
 
 import com.xu.viewpoint.dao.domain.*;
-import org.apache.mahout.cf.taste.common.TasteException;
+//import org.apache.mahout.cf.taste.common.TasteException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -137,5 +137,5 @@ public interface VideoService {
      * 视频推荐
      * @param userId
      */
-    List<Video> recommend(Long userId) throws TasteException;
+//    List<Video> recommend(Long userId) throws TasteException;
 }

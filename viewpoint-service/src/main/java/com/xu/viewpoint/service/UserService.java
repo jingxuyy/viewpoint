@@ -24,11 +24,11 @@ public interface UserService {
     void register(User user);
 
     /**
-     * 用户登录
+     * 用户登录 弃用
      * @param user
      * @return token
      */
-    String login(User user) throws Exception;
+//    String login(User user) throws Exception;
 
     /**
      * 根据id查询用户信息
@@ -44,11 +44,11 @@ public interface UserService {
      */
     User getCurrentUser(Long userId);
 
-    /**
-     * 更新用户信息
-     * @param user
-     */
-    void updateUser(User user) throws Exception;
+//    /** 弃用
+//     * 更新用户信息
+//     * @param user
+//     */
+//    void updateUser(User user) throws Exception;
 
     /**
      * 根据id查询用户
@@ -92,4 +92,16 @@ public interface UserService {
      * @param refreshToken
      */
     String refreshAccessToken(String refreshToken) throws Exception;
+
+    /**
+     * 根据userId查询 refreshToken
+     * @param userId
+     */
+    String getRefreshTokenByUserId(Long userId);
+
+    /**
+     * 更新用户基本信息
+     * @param user
+     */
+    void updateUserBasicInfo(User user) throws Exception;
 }

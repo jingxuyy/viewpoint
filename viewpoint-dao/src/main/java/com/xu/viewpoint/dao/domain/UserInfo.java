@@ -1,10 +1,10 @@
 package com.xu.viewpoint.dao.domain;
 
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+//import org.springframework.data.annotation.Id;
+//import org.springframework.data.elasticsearch.annotations.Document;
+//import org.springframework.data.elasticsearch.annotations.Field;
+//import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,12 +14,12 @@ import java.util.Date;
  * @author 86136
  * @TableName t_user_info
  */
-@Document(indexName = "user-infos")
+//@Document(indexName = "user-infos")
 public class UserInfo implements Serializable {
     /**
      * 主键
      */
-    @Id
+//    @Id
     private Long id;
 
     /**
@@ -31,7 +31,7 @@ public class UserInfo implements Serializable {
     /**
      * 昵称
      */
-    @Field(type = FieldType.Text)
+//    @Field(type = FieldType.Text)
     private String nick;
 
     /**
@@ -61,13 +61,13 @@ public class UserInfo implements Serializable {
     /**
      * 创建时间
      */
-    @Field(type = FieldType.Date)
+//    @Field(type = FieldType.Date)
     private Date createTime;
 
     /**
      * 更新时间
      */
-    @Field(type = FieldType.Date)
+//    @Field(type = FieldType.Date)
     private Date updateTime;
 
 

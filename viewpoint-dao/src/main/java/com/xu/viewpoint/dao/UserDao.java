@@ -103,8 +103,15 @@ public interface UserDao {
                             @Param("date") Date date);
 
     /**
-     * 根据refreshToken查询
+     * 根据refreshToken查询RefreshTokenDetail
      * @param refreshToken
      */
     RefreshTokenDetail getRefreshTokenDetailByRefreshToken(@Param("refreshToken") String refreshToken);
+
+    /**
+     * 根据userId查询 refreshToken
+     * @param userId
+     * @return
+     */
+    String getRefreshTokenByUserId(@Param("userId") Long userId);
 }

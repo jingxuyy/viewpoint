@@ -11,22 +11,22 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author: xuJing
- * @date: 2024/12/11 18:30
- */
-@RestController
-public class SystemApi {
-
-    @Autowired
-    private ElasticSearchService elasticSearchService;
-
-
-    @GetMapping("/contents")
-    public JsonResponse<List<Map<String, Object>>> getContents(@RequestParam String keyword,
-                                                         @RequestParam Integer pageNo,
-                                                         @RequestParam Integer pageSize) throws IOException {
-        List<Map<String, Object>> contents = elasticSearchService.getContents(keyword, pageNo, pageSize);
-        return JsonResponse.success(contents);
-    }
-}
+///**
+// * @author: xuJing
+// * @date: 2024/12/11 18:30
+// */
+//@RestController
+//public class SystemApi {
+//
+//    @Autowired
+//    private ElasticSearchService elasticSearchService;
+//
+//
+//    @GetMapping("/contents")
+//    public JsonResponse<List<Map<String, Object>>> getContents(@RequestParam String keyword,
+//                                                         @RequestParam Integer pageNo,
+//                                                         @RequestParam Integer pageSize) throws IOException {
+//        List<Map<String, Object>> contents = elasticSearchService.getContents(keyword, pageNo, pageSize);
+//        return JsonResponse.success(contents);
+//    }
+//}

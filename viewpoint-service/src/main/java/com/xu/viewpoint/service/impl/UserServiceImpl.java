@@ -89,58 +89,59 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 用户登录
+     * 用户登录  弃用
      *
      * @param user
      * @return token
      */
-    @Override
-    public String login(User user) throws Exception {
-        // XXX 改造：增加邮箱登录，要求：同时只会有一种情况登录
-
-        // 1. 验证手机号是否为空
-        // TODO 是否要验证手机号是否合法
-        String phone = user.getPhone() == null ? "" : user.getPhone();
-        String email = user.getEmail() == null ? "" : user.getEmail();
-        if(StringUtils.isNullOrEmpty(phone) && StringUtils.isNullOrEmpty(email)){
-            throw new ConditionException("参数异常！");
-        }
-
-        String phoneOrEmail = phone + email;
-
-
-        // 2. 验证用户是否存在
-        User dbUser = userDao.getUserByPhoneOrEmail(phoneOrEmail);
-        if(dbUser==null){
-            throw new ConditionException("当前用户不存在！");
-        }
-
-        // 3. 获取登录的密码（加密后）
-        String password = user.getPassword();
-
-        // 4. 对登陆密码进行解密
-        String originalPassword;
-        try {
-            originalPassword = RSAUtil.decrypt(password);
-        }catch (Exception e){
-            throw new ConditionException("登录失败，请稍后再试！");
-        }
-
-        // 5.1 获取登录用户的盐值
-        // 5.2 根据盐值和登录的解密密码进行MD5加密 与 数据库对应用户的密码比较
-        String salt = dbUser.getSalt();
-        String mdPassword = MD5Util.sign(originalPassword, salt, "UTF-8");
-        if(!mdPassword.equals(dbUser.getPassword())){
-            throw new ConditionException("账号或密码错误！");
-        }
-
-        // 6. 生成登录用户凭证token返回
-        return TokenUtil.generateToken(dbUser.getId());
-    }
+//    @Deprecated
+//    @Override
+//    public String login(User user) throws Exception {
+//        // XXX 改造：增加邮箱登录，要求：同时只会有一种情况登录
+//
+//        // 1. 验证手机号是否为空
+//        // TODO 是否要验证手机号是否合法
+//        String phone = user.getPhone() == null ? "" : user.getPhone();
+//        String email = user.getEmail() == null ? "" : user.getEmail();
+//        if(StringUtils.isNullOrEmpty(phone) && StringUtils.isNullOrEmpty(email)){
+//            throw new ConditionException("参数异常！");
+//        }
+//
+//        String phoneOrEmail = phone + email;
+//
+//
+//        // 2. 验证用户是否存在
+//        User dbUser = userDao.getUserByPhoneOrEmail(phoneOrEmail);
+//        if(dbUser==null){
+//            throw new ConditionException("当前用户不存在！");
+//        }
+//
+//        // 3. 获取登录的密码（加密后）
+//        String password = user.getPassword();
+//
+//        // 4. 对登陆密码进行解密
+//        String originalPassword;
+//        try {
+//            originalPassword = RSAUtil.decrypt(password);
+//        }catch (Exception e){
+//            throw new ConditionException("登录失败，请稍后再试！");
+//        }
+//
+//        // 5.1 获取登录用户的盐值
+//        // 5.2 根据盐值和登录的解密密码进行MD5加密 与 数据库对应用户的密码比较
+//        String salt = dbUser.getSalt();
+//        String mdPassword = MD5Util.sign(originalPassword, salt, "UTF-8");
+//        if(!mdPassword.equals(dbUser.getPassword())){
+//            throw new ConditionException("账号或密码错误！");
+//        }
+//
+//        // 6. 生成登录用户凭证token返回
+//        return TokenUtil.generateToken(dbUser.getId());
+//    }
 
 
     /**
-     * 根据id查询用户
+     * 根据id查询用户 所有信息
      *
      * @param userId
      * @return
@@ -165,7 +166,7 @@ public class UserServiceImpl implements UserService {
      * @param user
      */
     @Override
-    public void updateUser(User user) throws Exception {
+    public void updateUserBasicInfo(User user) throws Exception {
         // TODO 用户更新可以更新 ：1. phone  2. password  3. email
         // TODO 其中 phone 如果不为空，说明要更新phone信息 此时需要检查phone是否符合规范，同理email如此
         // TODO 如果 1 2 3 都为空 则不需要更新
@@ -323,7 +324,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String refreshAccessToken(String refreshToken) throws Exception {
 
-        TokenUtil.verifyToken(refreshToken);
+        TokenUtil.verifyToken(refreshToken, "refreshToken");
 
         RefreshTokenDetail refreshTokenDetail = userDao.getRefreshTokenDetailByRefreshToken(refreshToken);
         if(refreshTokenDetail==null){
@@ -343,5 +344,16 @@ public class UserServiceImpl implements UserService {
      */
     private User getUserByPhone(String phone){
         return userDao.getUserByPhone(phone);
+    }
+
+
+    /**
+     * 根据userId查询 refreshToken
+     *
+     * @param userId
+     */
+    @Override
+    public String getRefreshTokenByUserId(Long userId) {
+        return userDao.getRefreshTokenByUserId(userId);
     }
 }

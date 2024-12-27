@@ -1,10 +1,10 @@
 package com.xu.viewpoint.dao.domain;
 
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+//import org.springframework.data.annotation.Id;
+//import org.springframework.data.elasticsearch.annotations.Document;
+//import org.springframework.data.elasticsearch.annotations.Field;
+//import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,18 +14,18 @@ import java.util.List;
  * 视频投稿记录表
  * @TableName t_video
  */
-@Document(indexName = "videos")
+//@Document(indexName = "videos")
 public class Video implements Serializable {
     /**
      * 主键id
      */
-    @Id
+//    @Id
     private Long id;
 
     /**
      * 用户id
      */
-    @Field(type = FieldType.Long)
+//    @Field(type = FieldType.Long)
     private Long userId;
 
     /**
@@ -41,7 +41,7 @@ public class Video implements Serializable {
     /**
      * 视频标题
      */
-    @Field(type = FieldType.Text)
+//    @Field(type = FieldType.Text)
     private String title;
 
     /**
@@ -62,19 +62,19 @@ public class Video implements Serializable {
     /**
      * 视频简介
      */
-    @Field(type = FieldType.Text)
+//    @Field(type = FieldType.Text)
     private String description;
 
     /**
      * 创建时间
      */
-    @Field(type = FieldType.Date)
+//    @Field(type = FieldType.Date)
     private Date createTime;
 
     /**
      * 更新时间
      */
-    @Field(type = FieldType.Date)
+//    @Field(type = FieldType.Date)
     private Date updateTime;
 
     /**
