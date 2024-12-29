@@ -35,7 +35,7 @@ public class TokenUtil {
         Algorithm algorithm = Algorithm.RSA256(RSAUtil.getPublicKey(), RSAUtil.getPrivateKey());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.MINUTE, 30);
+        calendar.add(Calendar.HOUR, 24*7);
 
         return JWT.create().withKeyId(String.valueOf(userId))
                 .withIssuer(ISSUER)

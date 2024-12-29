@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.viewpoint.dao.v2.UserFollowingDao">
+
+
+
+    <delete id="deleteUserFollowing">
+        delete from
+            t_user_following
+        where
+            userId = #{userId}
+          and
+            followingId = #{followingId}
+    </delete>
+
+
+
+    <insert id="addUserFollowing">
+        insert into
+            t_user_following(
+            userId,
+            followingId,
+            groupId,
+            createTime
+        )
+        values (
+           #{userFollowing.userId},
+           #{userFollowing.followingId},
+           #{userFollowing.groupId},
+           #{userFollowing.createTime}
+        )
+    </insert>
+
+
+    <select id="getUserFollowings" resultType="com.xu.viewpoint.dao.domain.UserFollowing">
+        select
+            *
+        from
+            t_user_following
+        where
+            userId = #{userId}
+    </select>
+
+
+</mapper>

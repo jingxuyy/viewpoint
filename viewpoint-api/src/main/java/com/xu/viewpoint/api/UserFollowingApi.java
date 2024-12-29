@@ -1,20 +1,20 @@
-package com.xu.viewpoint.api;
-
-import com.xu.viewpoint.api.support.UserSupport;
-import com.xu.viewpoint.dao.domain.FollowingGroup;
-import com.xu.viewpoint.dao.domain.JsonResponse;
-import com.xu.viewpoint.dao.domain.UserFollowing;
-import com.xu.viewpoint.service.UserFollowingService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-
-/**
- * @author: xuJing
- * @date: 2024/11/23 11:16
- */
+//package com.xu.viewpoint.api;
+//
+//import com.xu.viewpoint.api.support.UserSupport;
+//import com.xu.viewpoint.dao.domain.FollowingGroup;
+//import com.xu.viewpoint.dao.domain.JsonResponse;
+//import com.xu.viewpoint.dao.domain.UserFollowing;
+//import com.xu.viewpoint.service.UserFollowingService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.web.bind.annotation.*;
+//
+//import java.util.List;
+//
+//
+///**
+// * @author: xuJing
+// * @date: 2024/11/23 11:16
+// */
 //@RestController
 //public class UserFollowingApi {
 //

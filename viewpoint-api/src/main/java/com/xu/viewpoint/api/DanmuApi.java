@@ -1,16 +1,16 @@
-package com.xu.viewpoint.api;
-
-import com.xu.viewpoint.api.support.UserSupport;
-import com.xu.viewpoint.dao.domain.Danmu;
-import com.xu.viewpoint.dao.domain.JsonResponse;
-import com.xu.viewpoint.service.DanmuService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.text.ParseException;
-import java.util.List;
+//package com.xu.viewpoint.api;
+//
+//import com.xu.viewpoint.api.support.UserSupport;
+//import com.xu.viewpoint.dao.domain.Danmu;
+//import com.xu.viewpoint.dao.domain.JsonResponse;
+//import com.xu.viewpoint.service.DanmuService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.RequestParam;
+//import org.springframework.web.bind.annotation.RestController;
+//
+//import java.text.ParseException;
+//import java.util.List;
 
 /**
  * @author: xuJing

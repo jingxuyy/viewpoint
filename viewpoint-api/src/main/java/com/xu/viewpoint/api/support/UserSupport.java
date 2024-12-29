@@ -2,7 +2,7 @@ package com.xu.viewpoint.api.support;
 
 import com.mysql.cj.util.StringUtils;
 import com.xu.viewpoint.dao.domain.exception.ConditionException;
-import com.xu.viewpoint.service.UserService;
+//import com.xu.viewpoint.service.UserService;
 import com.xu.viewpoint.service.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
