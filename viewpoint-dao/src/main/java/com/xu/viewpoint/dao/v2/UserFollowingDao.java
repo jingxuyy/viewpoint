@@ -28,4 +28,16 @@ public interface UserFollowingDao {
      * @param userId
      */
     List<UserFollowing> getUserFollowings(@Param("userId") Long userId);
+
+    /**
+     * 根据followingId查询记录
+     * @param followingId
+     */
+    List<UserFollowing> getUserFans(@Param("followingId") Long followingId);
+
+    /**
+     * 更新被关注用户的分组 将关注的用户移动到其它分组
+     * @param userFollowing
+     */
+    Integer updateUserFollowing(@Param("userFollowing") UserFollowing userFollowing);
 }

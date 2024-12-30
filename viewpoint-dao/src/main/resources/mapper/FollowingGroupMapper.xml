@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xu.viewpoint.dao.v2.FollowingGroupDao">
 
+
     <select id="getByType" resultType="com.xu.viewpoint.dao.domain.FollowingGroup">
         select
             *
@@ -33,6 +34,34 @@
         where
             userId = #{userId} or `type` in ('0', '1', '2')
     </select>
+
+
+    <insert id="insertFollowingGroup" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            t_following_group(
+                userId,
+                `name`,
+                `type`,
+                createTime
+        )
+        values (
+           #{followingGroup.userId},
+           #{followingGroup.name},
+           #{followingGroup.type},
+           #{followingGroup.createTime}
+            )
+    </insert>
+
+
+    <select id="getUserFollowingGroup" resultType="com.xu.viewpoint.dao.domain.FollowingGroup">
+        select
+            *
+        from
+            t_following_group
+        where
+            userId = #{userId}
+    </select>
+
 
 
 </mapper>

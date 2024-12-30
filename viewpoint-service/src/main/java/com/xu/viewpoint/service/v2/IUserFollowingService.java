@@ -54,8 +54,9 @@ public interface IUserFollowingService {
     void deleteUserFollowing(Long userId, Long followingId);
 
     /**
-     * 修改关注信息（即修改关注人分组）
+     * 修改关注信息（即修改关注人分组）将关注的用户移动到其它分组
      * @param userFollowing
      */
     void updateUserFollowing(UserFollowing userFollowing);
+
 }

@@ -44,4 +44,24 @@
     </select>
 
 
+    <select id="getUserFans" resultType="com.xu.viewpoint.dao.domain.UserFollowing">
+        select
+            *
+        from
+            t_user_following
+        where
+            followingId = #{followingId}
+    </select>
+
+
+    <update id="updateUserFollowing">
+        update
+            t_user_following
+        set
+            groupId = #{userFollowing.groupId}
+        where
+            userId = #{userFollowing.userId} and followingId = #{userFollowing.followingId}
+    </update>
+
+
 </mapper>

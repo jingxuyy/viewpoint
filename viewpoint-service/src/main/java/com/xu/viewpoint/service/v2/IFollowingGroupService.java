@@ -1,6 +1,7 @@
 package com.xu.viewpoint.service.v2;
 
 import com.xu.viewpoint.dao.domain.FollowingGroup;
+import com.xu.viewpoint.dao.domain.UserFollowing;
 
 import java.util.List;
 
@@ -23,4 +24,17 @@ public interface IFollowingGroupService {
      * @param userId
      */
     List<FollowingGroup> getByUserId(Long userId);
+
+    /**
+     * 添加自定义分组
+     *
+     * @param followingGroup
+     */
+    void insertFollowingGroup(FollowingGroup followingGroup);
+
+    /**
+     * 获取用户自己创建的分组
+     * @param userId
+     */
+    List<FollowingGroup> getUserFollowingGroup(Long userId);
 }

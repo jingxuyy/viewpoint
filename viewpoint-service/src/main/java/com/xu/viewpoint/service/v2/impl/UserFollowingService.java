@@ -154,7 +154,43 @@ public class UserFollowingService implements IUserFollowingService {
      */
     @Override
     public List<UserFollowing> getUserFans(Long userId) {
-        return null;
+
+        // 从数据库t_user_following中查询关注情况，获取粉丝id 即 查询followingId = userId
+        List<UserFollowing> fanList = userFollowingDao.getUserFans(userId);
+
+        // 获取粉丝用户id的集合
+        Set<Long> fanIdSet = fanList.stream()
+                .map(UserFollowing::getUserId)
+                .collect(Collectors.toSet());
+
+        // 2. 根据粉丝id集合，查询对应的用户具体详细信息
+        List<UserInfo> userInfoList = new ArrayList<>();
+        if(fanIdSet.size()>0){
+            userInfoList = userService.getUserInfoByUserIds(fanIdSet);
+        }
+
+        // 3. 查看有没有互相关注的情况  UserInfo 类 存在 followed属性，用来表示有没有互粉
+        // 3.1 获取当前用户的关注列表
+        List<UserFollowing> followingList = userFollowingDao.getUserFollowings(userId);
+
+        // 依次遍历粉丝关注集合
+        for (UserFollowing fan : fanList) {
+            // 依次遍历粉丝详细信息集合，将粉丝详细信息设置到 关注UserFollowing对象中
+            for (UserInfo userInfo : userInfoList) {
+                if(fan.getUserId().equals(userInfo.getUserId())){
+                    fan.setUserInfo(userInfo);
+                    userInfo.setFollowed(false);
+                }
+            }
+            // 3.2 如果互粉，则设置状态
+            // 遍历当前用户关注集合，若关注的用户id即followingId和粉丝的关注集合中userId相同则是互粉
+            for (UserFollowing userFollowing : followingList) {
+                if(fan.getUserId().equals(userFollowing.getFollowingId())){
+                    fan.getUserInfo().setFollowed(true);
+                }
+            }
+        }
+        return fanList;
     }
 
     /**
@@ -175,7 +211,14 @@ public class UserFollowingService implements IUserFollowingService {
      */
     @Override
     public Long addUserFollowingGroup(FollowingGroup followingGroup) {
-        return null;
+
+        // 用添加自定义分组，用户id 分组名
+
+        // 设置创建时间和类型
+        followingGroup.setCreateTime(new Date());
+        followingGroup.setType(UserConstant.USER_FOLLOWING_GROUP_TYPE_USER);
+        followingGroupService.insertFollowingGroup(followingGroup);
+        return followingGroup.getId();
     }
 
     /**
@@ -185,18 +228,34 @@ public class UserFollowingService implements IUserFollowingService {
      */
     @Override
     public List<FollowingGroup> getUserFollowingGroup(Long userId) {
-        return null;
+        return followingGroupService.getUserFollowingGroup(userId);
     }
 
 
 
     /**
-     * 修改关注信息（即修改关注人分组）
+     * 修改关注信息（即修改关注人分组） 将关注的用户移动到其它分组
      *
      * @param userFollowing
      */
     @Override
     public void updateUserFollowing(UserFollowing userFollowing) {
 
+        // 获取要移动的目的分组id
+        Long groupId = userFollowing.getGroupId();
+        if (groupId == null){
+            throw new ConditionException("参数错误！");
+        }
+
+        // 查询分组是否存在
+        FollowingGroup group = followingGroupService.getById(groupId);
+        if (group == null){
+            throw new ConditionException("参数错误！");
+        }
+
+        // TODO 需要查看移动的分组是不是当前用户创建的，不允许移动到别人创建的分组中
+
+        // 更新分组
+        userFollowingDao.updateUserFollowing(userFollowing);
     }
 }

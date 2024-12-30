@@ -22,8 +22,20 @@ public interface FollowingGroupDao {
     FollowingGroup getById(@Param("id") Long id);
 
     /**
-     * 根据userId查询用户创建的分组
+     * 根据userId查询用户创建的分组 包括默认分组
      * @param userId
      */
     List<FollowingGroup> getByUserId(@Param("userId") Long userId);
+
+    /**
+     * 添加自定义分组  需要返回添加后的id
+     * @param followingGroup
+     */
+    Integer insertFollowingGroup(@Param("followingGroup") FollowingGroup followingGroup);
+
+    /**
+     * 查询用户自定义的分组
+     * @param userId
+     */
+    List<FollowingGroup> getUserFollowingGroup(@Param("userId") Long userId);
 }

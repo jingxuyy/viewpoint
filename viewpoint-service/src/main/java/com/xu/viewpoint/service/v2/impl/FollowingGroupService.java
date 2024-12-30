@@ -49,4 +49,25 @@ public class FollowingGroupService implements IFollowingGroupService {
     public List<FollowingGroup> getByUserId(Long userId) {
         return followingGroupDao.getByUserId(userId);
     }
+
+
+    /**
+     * 添加自定义分组
+     *
+     * @param followingGroup
+     */
+    @Override
+    public void insertFollowingGroup(FollowingGroup followingGroup) {
+        followingGroupDao.insertFollowingGroup(followingGroup);
+    }
+
+    /**
+     * 获取用户自己创建的分组
+     *
+     * @param userId
+     */
+    @Override
+    public List<FollowingGroup> getUserFollowingGroup(Long userId) {
+        return followingGroupDao.getUserFollowingGroup(userId);
+    }
 }

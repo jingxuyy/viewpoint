@@ -58,4 +58,52 @@ public class UserFollowingApi {
         List<FollowingGroup> result = userFollowingService.getUserFollowingGroups(userId);
         return JsonResponse.success(result);
     }
+
+
+    /**
+     * 获取用户所有粉丝，并标明互粉情况
+     */
+    @GetMapping("/user-fans")
+    public JsonResponse<List<UserFollowing>> getUserFans(){
+        Long userId = userSupport.getCurrentUserId();
+        List<UserFollowing> fanList = userFollowingService.getUserFans(userId);
+        return JsonResponse.success(fanList);
+    }
+
+
+    /**
+     * 将关注的用户移动到其它分组
+     * @param userFollowing
+     */
+    @PutMapping("/user-followings")
+    public JsonResponse<String> updateUserFollowings(@RequestBody UserFollowing userFollowing){
+        Long userId = userSupport.getCurrentUserId();
+        userFollowing.setUserId(userId);
+        userFollowingService.updateUserFollowing(userFollowing);
+        return JsonResponse.success();
+    }
+
+
+    /**
+     * 用户添加自定义分组
+     * @param followingGroup
+     */
+    @PostMapping("/user-following-groups")
+    public JsonResponse<Long> addUserFollowingGroup(@RequestBody FollowingGroup followingGroup){
+        Long userId = userSupport.getCurrentUserId();
+        followingGroup.setUserId(userId);
+        Long groupId = userFollowingService.addUserFollowingGroup(followingGroup);
+        return JsonResponse.success(groupId);
+    }
+
+    /**
+     * 获取用户自己创建的分组
+     */
+    @GetMapping("/user-following-groups")
+    public JsonResponse<List<FollowingGroup>> getUserFollowingGroup(){
+        Long userId = userSupport.getCurrentUserId();
+        List<FollowingGroup> result = userFollowingService.getUserFollowingGroup(userId);
+        return JsonResponse.success(result);
+    }
+
 }
