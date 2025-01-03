@@ -4,7 +4,7 @@ import com.xu.viewpoint.api.support.UserSupport;
 import com.xu.viewpoint.dao.domain.FollowingGroup;
 import com.xu.viewpoint.dao.domain.JsonResponse;
 import com.xu.viewpoint.dao.domain.UserFollowing;
-import com.xu.viewpoint.service.v2.impl.UserFollowingService;
+import com.xu.viewpoint.service.v2.IUserFollowingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ public class UserFollowingApi {
     private UserSupport userSupport;
 
     @Autowired
-    private UserFollowingService userFollowingService;
+    private IUserFollowingService userFollowingService;
 
 
     /**

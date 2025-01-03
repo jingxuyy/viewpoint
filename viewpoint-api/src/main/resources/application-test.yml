@@ -5,9 +5,9 @@ spring:
     username: root
     password: root
 
-#  redis:
-#    host: 127.0.0.1
-#    port: 6379
+  redis:
+    host: 127.0.0.1
+    port: 6379
 
   servlet:
     multipart:
@@ -17,10 +17,10 @@ spring:
 #    uris: 192.168.59.100:9200
 
 
-#rocketmq:
-#  name:
-#    server:
-#      address: 127.0.0.1:9876
+rocketmq:
+  name:
+    server:
+      address: 127.0.0.1:9876
 
 
 #fdfs:

@@ -44,6 +44,27 @@ public class UserMoment implements Serializable {
     private Date updateTime;
 
 
+    private Content content;
+
+
+    private UserInfo userInfo;
+
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
+
+    public Content getContent() {
+        return content;
+    }
+
+    public void setContent(Content content) {
+        this.content = content;
+    }
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
