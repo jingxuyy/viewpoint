@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.viewpoint.dao.v2.VideoDao">
+
+    <insert id="addVideos" keyProperty="id" useGeneratedKeys="true">
+        insert into
+            t_video(
+                userId,
+                url,
+                thumbnail,
+                title,
+                `type`,
+                duration,
+                area,
+                description,
+                createTime
+        )values (
+             #{video.userId},
+             #{video.url},
+             #{video.thumbnail},
+             #{video.title},
+             #{video.type},
+             #{video.duration},
+             #{video.area},
+             #{video.description},
+             #{video.createTime}
+        )
+    </insert>
+</mapper>

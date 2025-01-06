@@ -1,4 +1,4 @@
-package com.xu.viewpoint.service.impl;
+//package com.xu.viewpoint.service.impl;
 
 //import com.xu.viewpoint.dao.VideoDao;
 //import com.xu.viewpoint.dao.domain.*;

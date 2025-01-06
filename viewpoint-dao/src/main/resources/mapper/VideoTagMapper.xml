@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.viewpoint.dao.v2.VideoTagDao">
+
+    <insert id="batchAddVideoTags">
+        insert into
+            t_video_tag(
+                videoId,
+                tagId,
+                createTime
+        ) values
+             <foreach collection="tagList" item="tag" open="(" close=")" separator=",">
+                 #{tag.videoId},
+                 #{tag.tagId},
+                 #{tag.createTime}
+             </foreach>
+    </insert>
+</mapper>
